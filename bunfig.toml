@@ -1,0 +1,4 @@
+[install]
+# Starlight renders some of its components with satteri, and the build output looks for its native
+# package from packages/website, where the isolated layout does not put it.
+publicHoistPattern = ["@bruits/satteri-*"]

@@ -1,0 +1,65 @@
+---
+title: Install with Docker
+description: Run the Paron server with Docker Compose.
+sidebar:
+  order: 2
+---
+
+import { Code } from "@astrojs/starlight/components";
+import compose from "../../../../../../../crates/paron-cli/examples/docker-compose.server.yml?raw";
+
+## Compose file
+
+<Code code={compose} lang="yaml" title="docker-compose.server.yml" />
+
+## Start the server
+
+1. Save the file above as `docker-compose.server.yml`.
+
+2. Set `PARON_PUBLIC_URL` to the URLs that your browser and your machines use for Paron. Separate
+   the URLs with commas. The first URL is in the links that Paron makes. See
+   [Public URLs](/docs/server/reference/#public-urls).
+
+   ```yaml
+   environment:
+     PARON_PUBLIC_URL: https://paron.example.com
+   ```
+
+3. Select the source of the certificate.
+
+   - As shown, the file requests a certificate from Let's Encrypt. A domain gets a certificate only if it
+     resolves to an address where Let's Encrypt can reach Paron on port 443. For the other hosts,
+     Paron generates its own certificate. Set `PARON_ACME_CONTACT` to your e-mail address.
+   - If no URL has a public domain, remove `PARON_LETSENCRYPT` and
+     `PARON_ACME_CONTACT`. Paron then generates its own certificate. See
+     [Certificates](/docs/server/certificates/).
+
+4. Start the services.
+
+   ```sh
+   docker compose -f docker-compose.server.yml up -d
+   ```
+
+The file has two services. `paron-server-init` runs `paron server bootstrap` one time and prepares
+the data volume. `paron-server` runs `paron server run`.
+
+The server listens on port 8443 in the container. The file publishes it as port 443, for TCP and
+for UDP. Paron uses both: TCP for the web UI and for tunnels, and UDP for tunnels over QUIC.
+
+## Get the administrator password
+
+The first start creates the account `paron` with a random password. Paron writes the password to
+the file `initial-admin-password` in the data volume, and it deletes that file after 24 hours.
+
+The image contains only the `paron` program, so print the file with a second container:
+
+```sh
+docker run --rm --volumes-from "$(docker compose -f docker-compose.server.yml ps -q paron-server)" alpine cat /data/initial-admin-password
+```
+
+Then [sign in for the first time](/docs/get-started/first-sign-in/).
+
+## Settings
+
+Each option of `paron server run` has an environment variable. Set the variables in the
+`environment` section of `paron-server`. See [Reference](/docs/server/reference/).

@@ -1,0 +1,33 @@
+{
+  "name": "website",
+  "private": true,
+  "license": "SEE LICENSE IN ../../LICENSE",
+  "type": "module",
+  "scripts": {
+    "dev": "bun run --bun astro dev",
+    "build": "bun run --bun astro build",
+    "preview": "bun run --bun astro preview",
+    "lint": "bun run --bun astro check",
+    "format": "bun run --bun prettier --check ."
+  },
+  "dependencies": {
+    "@astrojs/starlight": "catalog:",
+    "@astrojs/starlight-tailwind": "catalog:",
+    "@fontsource-variable/fira-code": "catalog:",
+    "@fontsource-variable/schibsted-grotesk": "catalog:",
+    "@lucide/astro": "catalog:",
+    "@tailwindcss/vite": "catalog:",
+    "astro": "catalog:",
+    "sharp": "catalog:",
+    "starlight-auto-sidebar": "catalog:",
+    "starlight-image-zoom": "catalog:",
+    "starlight-llms-txt": "catalog:",
+    "tailwindcss": "catalog:"
+  },
+  "devDependencies": {
+    "@astrojs/check": "catalog:",
+    "prettier": "catalog:",
+    "prettier-plugin-astro": "catalog:",
+    "typescript": "catalog:"
+  }
+}

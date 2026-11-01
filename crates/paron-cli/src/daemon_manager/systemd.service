@@ -1,0 +1,24 @@
+[Unit]
+Description={{ description }}
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=exec
+{%- for setting in settings %}
+Environment={{ setting }}
+{%- endfor %}
+ExecStart={{ command }}
+User={{ user }}
+{%- if privileged_ports %}
+AmbientCapabilities=CAP_NET_BIND_SERVICE
+{%- endif %}
+Restart=on-failure
+RestartSec=5s
+TimeoutStopSec={{ stop_seconds }}s
+NoNewPrivileges=true
+ProtectSystem=strict
+ReadWritePaths={{ writable }}
+
+[Install]
+WantedBy=multi-user.target

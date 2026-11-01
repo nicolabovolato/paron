@@ -1,0 +1,90 @@
+<svg xmlns="http://www.w3.org/2000/svg" class="paron-diagram" viewBox="0 0 852 380" role="img" aria-label="Each machine opens a tunnel to the Paron server.">
+  <style>
+    /* In a page that defines the --sl-color-* variables, the diagram uses them. Opened alone, it uses the second value. */
+    .paron-diagram {
+      --d-bg: var(--sl-color-bg, #ffffff);
+      --d-text: var(--sl-color-white, #17181c);
+      --d-detail: var(--sl-color-gray-2, #454857);
+      --d-line: var(--sl-color-gray-3, #6b6f85);
+      --d-box: var(--sl-color-gray-6, #f0f1f5);
+      --d-box-line: var(--sl-color-gray-4, #a3a7b8);
+      --d-server: var(--sl-color-accent-low, #c7d2fe);
+      --d-server-line: var(--sl-color-accent, #4f46e5);
+      --d-tunnel: var(--sl-color-orange, #d97706);
+      --d-tunnel-text: var(--sl-color-orange-high, #92400e);
+      --d-refused: var(--sl-color-red, #dc2626);
+      font-family: var(--sl-font, system-ui, sans-serif);
+    }
+    @media (prefers-color-scheme: dark) {
+      .paron-diagram {
+        --d-bg: var(--sl-color-bg, #17181c);
+        --d-text: var(--sl-color-white, #ffffff);
+        --d-detail: var(--sl-color-gray-2, #c0c2d0);
+        --d-line: var(--sl-color-gray-3, #8f93a8);
+        --d-box: var(--sl-color-gray-6, #24262e);
+        --d-box-line: var(--sl-color-gray-4, #545868);
+        --d-server: var(--sl-color-accent-low, #1e2a78);
+        --d-server-line: var(--sl-color-accent, #6d7cff);
+        --d-tunnel: var(--sl-color-orange, #f5a524);
+        --d-tunnel-text: var(--sl-color-orange-high, #fcd58a);
+        --d-refused: var(--sl-color-red, #f87171);
+      }
+    }
+    .paron-diagram .bg { fill: var(--d-bg); }
+    .paron-diagram text { text-anchor: middle; fill: var(--d-detail); font-size: 13px; }
+    .paron-diagram .name { fill: var(--d-text); font-size: 15px; font-weight: 600; }
+    .paron-diagram .box { fill: var(--d-box); stroke: var(--d-box-line); }
+    .paron-diagram .server { fill: var(--d-server); stroke: var(--d-server-line); stroke-width: 1.5; }
+    .paron-diagram .zone { fill: none; stroke: var(--d-box-line); stroke-dasharray: 4 4; }
+    .paron-diagram .line { fill: none; stroke: var(--d-line); stroke-width: 1.5; }
+    .paron-diagram .arrow { fill: var(--d-line); }
+    .paron-diagram .line.tunnel { stroke: var(--d-tunnel); stroke-dasharray: 6 4; }
+    .paron-diagram .arrow.tunnel { fill: var(--d-tunnel); }
+    .paron-diagram .label.tunnel { fill: var(--d-tunnel-text); }
+      .paron-diagram .start { text-anchor: start; }
+    .paron-diagram .chip { fill: var(--d-bg); stroke: var(--d-tunnel); stroke-width: 1.5; }
+    .paron-diagram .chip-name { fill: var(--d-text); font-weight: 600; }
+    .paron-diagram .line.refused { stroke: var(--d-refused); stroke-dasharray: 2 4; }
+    .paron-diagram .cross { fill: none; stroke: var(--d-refused); stroke-width: 2; }
+  </style>
+  <defs>
+    <marker id="paron-tunnels-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path class="arrow" d="M0 0 10 5 0 10z"/>
+    </marker>
+    <marker id="paron-tunnels-arrow-tunnel" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path class="arrow tunnel" d="M0 0 10 5 0 10z"/>
+    </marker>
+  </defs>
+
+  <rect class="bg" width="852" height="380"/>
+
+  <rect class="box server" x="20" y="40" width="190" height="300" rx="10"/>
+  <g fill="none" transform="translate(93 146) scale(0.458333) translate(-2 -16)"><rect x="2" y="16" width="96" height="96" rx="22" fill="oklch(0.17 0.012 35)"/><g transform="translate(50 64) scale(0.88) translate(-50 -64)"><path transform="translate(50 100) scale(0.84 0.8) translate(-50 -100)" d="M3 100 L3.4 88.5 Q4 81.6 10.5 80 L37 72.6 L63 72.6 L89.5 80 Q96 81.6 96.6 88.5 L97 100 Z" fill="oklch(0.94 0.01 80)"></path><g transform="translate(0 7) translate(50 76) scale(0.88) translate(-50 -76)"><path d="M27 35 L27 53 C25.5 68 36 76 50 76 C64 76 74.5 68 73 53 L73 35 Z" fill="oklch(0.94 0.01 80)" stroke="oklch(0.17 0.01 45)" stroke-width="4" stroke-linejoin="round"></path><path d="M32.4 42.2 L47.8 45 L47 49.4 L32.8 46.4 Z" fill="oklch(0.17 0.01 45)"></path><path d="M67.6 42.2 L52.2 45 L53 49.4 L67.2 46.4 Z" fill="oklch(0.17 0.01 45)"></path><path d="M36 51.6 L45 51.6 M64 51.6 L55 51.6" stroke="oklch(0.17 0.01 45)" stroke-width="3.4" stroke-linecap="round"></path><path d="M43 65.6 Q50 64 57 65.8" stroke="oklch(0.17 0.01 45)" stroke-width="3.6" stroke-linecap="round"></path><g transform="translate(0 3.5)"><path d="M26 30 L30 14 C36 9.5 44 9 50 11 C56 9 64 9.5 70 14 L74 30 Z" fill="oklch(0.94 0.01 80)"></path><path d="M12 30 C20.5 42.5 79.5 42.5 88 30 C77.5 34.8 22.5 34.8 12 30 Z" fill="oklch(0.94 0.01 80)" stroke="oklch(0.17 0.01 45)" stroke-width="2.6" stroke-linejoin="round"></path></g></g></g></g>
+  <text class="name" x="115" y="216">Paron server</text>
+
+  <rect class="zone" x="440" y="30" width="392" height="110" rx="14"/>
+  <rect class="bg" x="576" y="20" width="120" height="20"/>
+  <text x="636" y="35">home network</text>
+  <rect class="box" x="452" y="50" width="368" height="70" rx="10"/>
+  <rect class="chip" x="464" y="62" width="124" height="46" rx="8"/>
+  <text class="chip-name" x="526" y="90">Paron tunnel</text>
+  <text class="name" x="704" y="90">Machine 1</text>
+  <path class="line tunnel" d="M462 85H212" marker-end="url(#paron-tunnels-arrow-tunnel)"/>
+  <text class="label tunnel" x="326" y="75">tunnel</text>
+
+  <rect class="zone" x="440" y="170" width="392" height="190" rx="14"/>
+  <rect class="bg" x="576" y="160" width="120" height="20"/>
+  <text x="636" y="175">office network</text>
+  <rect class="box" x="452" y="190" width="368" height="70" rx="10"/>
+  <rect class="chip" x="464" y="202" width="124" height="46" rx="8"/>
+  <text class="chip-name" x="526" y="230">Paron tunnel</text>
+  <text class="name" x="704" y="230">Machine 2</text>
+  <path class="line tunnel" d="M462 225H212" marker-end="url(#paron-tunnels-arrow-tunnel)"/>
+  <text class="label tunnel" x="326" y="215">tunnel</text>
+  <rect class="box" x="452" y="270" width="368" height="70" rx="10"/>
+  <rect class="chip" x="464" y="282" width="124" height="46" rx="8"/>
+  <text class="chip-name" x="526" y="310">Paron tunnel</text>
+  <text class="name" x="704" y="310">Machine 3</text>
+  <path class="line tunnel" d="M462 305H212" marker-end="url(#paron-tunnels-arrow-tunnel)"/>
+  <text class="label tunnel" x="326" y="295">tunnel</text>
+</svg>

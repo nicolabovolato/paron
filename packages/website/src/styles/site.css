@@ -1,0 +1,119 @@
+@layer base, starlight, theme, components, utilities;
+@import "@astrojs/starlight-tailwind";
+@import "tailwindcss/theme.css" layer(theme);
+@import "tailwindcss/utilities.css" layer(utilities);
+@import "@fontsource-variable/schibsted-grotesk";
+@import "@fontsource-variable/fira-code";
+
+@theme {
+  --font-sans: "Schibsted Grotesk Variable", sans-serif;
+  --font-mono: "Fira Code Variable", monospace;
+}
+
+:root {
+  --paron-bg: oklch(0.17 0.012 35);
+  --paron-card: oklch(0.2 0.013 35);
+  --paron-muted: oklch(0.27 0.014 35);
+  --paron-border: oklch(0.3 0.017 35);
+  --paron-fg: oklch(0.94 0.012 80);
+  --paron-muted-fg: oklch(0.7 0.02 60);
+  --paron-primary: oklch(0.64 0.14 152);
+  --paron-primary-fg: oklch(0.16 0.02 152);
+
+  --sl-color-white: var(--paron-fg);
+  --sl-color-gray-1: oklch(0.9 0.012 75);
+  --sl-color-gray-2: oklch(0.84 0.015 70);
+  --sl-color-gray-3: var(--paron-muted-fg);
+  --sl-color-gray-4: oklch(0.5 0.018 40);
+  --sl-color-gray-5: var(--paron-border);
+  --sl-color-gray-6: var(--paron-card);
+  --sl-color-black: var(--paron-bg);
+  --sl-color-accent-low: oklch(0.3 0.06 152);
+  --sl-color-accent: var(--paron-primary);
+  --sl-color-accent-high: oklch(0.82 0.1 152);
+  --sl-color-bg-inline-code: var(--paron-muted);
+  --sl-color-hairline-light: var(--paron-border);
+  --sl-color-hairline: oklch(0.25 0.015 35);
+  --sl-color-backdrop-overlay: oklch(0.12 0.01 35 / 0.7);
+
+  --sl-color-orange-low: oklch(0.32 0.06 70);
+  --sl-color-orange: oklch(0.78 0.12 80);
+  --sl-color-orange-high: oklch(0.9 0.06 85);
+  --sl-color-green-low: oklch(0.3 0.06 152);
+  --sl-color-green: var(--paron-primary);
+  --sl-color-green-high: oklch(0.86 0.08 152);
+  --sl-color-red-low: oklch(0.3 0.07 28);
+  --sl-color-red: oklch(0.7 0.17 28);
+  --sl-color-red-high: oklch(0.88 0.06 28);
+  --sl-color-blue-low: oklch(0.3 0.05 245);
+  --sl-color-blue: oklch(0.72 0.11 245);
+  --sl-color-blue-high: oklch(0.88 0.05 245);
+  --sl-color-purple-low: oklch(0.3 0.05 300);
+  --sl-color-purple: oklch(0.72 0.11 300);
+  --sl-color-purple-high: oklch(0.88 0.05 300);
+
+  --sl-font: var(--font-sans);
+  --sl-font-mono: var(--font-mono);
+}
+
+:root[data-theme="light"] {
+  --paron-bg: oklch(0.962 0.009 80);
+  --paron-card: oklch(0.997 0.003 80);
+  --paron-muted: oklch(0.93 0.012 75);
+  --paron-border: oklch(0.855 0.012 70);
+  --paron-fg: oklch(0.19 0.015 35);
+  --paron-muted-fg: oklch(0.46 0.02 50);
+  --paron-primary: oklch(0.48 0.12 152);
+  --paron-primary-fg: oklch(0.98 0.01 150);
+
+  --sl-color-white: var(--paron-fg);
+  --sl-color-gray-1: oklch(0.25 0.015 35);
+  --sl-color-gray-2: oklch(0.32 0.016 40);
+  --sl-color-gray-3: var(--paron-muted-fg);
+  --sl-color-gray-4: oklch(0.64 0.016 70);
+  --sl-color-gray-5: var(--paron-border);
+  --sl-color-gray-6: oklch(0.945 0.01 75);
+  --sl-color-gray-7: oklch(0.93 0.012 75);
+  --sl-color-black: var(--paron-bg);
+  --sl-color-accent-low: oklch(0.9 0.05 152);
+  --sl-color-accent: var(--paron-primary);
+  --sl-color-accent-high: oklch(0.36 0.09 152);
+  --sl-color-bg-nav: var(--paron-bg);
+  --sl-color-bg-sidebar: var(--paron-bg);
+  --sl-color-bg-inline-code: var(--paron-muted);
+  --sl-color-hairline-light: var(--paron-border);
+  --sl-color-hairline: oklch(0.9 0.011 72);
+  --sl-color-backdrop-overlay: oklch(0.3 0.015 35 / 0.4);
+
+  --sl-color-orange-low: oklch(0.93 0.05 85);
+  --sl-color-orange: oklch(0.5 0.11 70);
+  --sl-color-orange-high: oklch(0.4 0.09 65);
+  --sl-color-green-low: oklch(0.9 0.05 152);
+  --sl-color-green: var(--paron-primary);
+  --sl-color-green-high: oklch(0.36 0.09 152);
+  --sl-color-red-low: oklch(0.93 0.04 28);
+  --sl-color-red: oklch(0.5 0.17 28);
+  --sl-color-red-high: oklch(0.4 0.14 28);
+  --sl-color-blue-low: oklch(0.93 0.03 245);
+  --sl-color-blue: oklch(0.5 0.11 245);
+  --sl-color-blue-high: oklch(0.4 0.09 245);
+  --sl-color-purple-low: oklch(0.93 0.03 300);
+  --sl-color-purple: oklch(0.5 0.11 300);
+  --sl-color-purple-high: oklch(0.4 0.09 300);
+}
+
+:root {
+  --sl-content-width: 46rem;
+  font-feature-settings: normal;
+}
+
+code,
+kbd,
+samp,
+pre {
+  font-variant-ligatures: none;
+}
+
+::selection {
+  background: color-mix(in oklch, var(--paron-primary) 30%, transparent);
+}

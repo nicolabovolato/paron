@@ -1,0 +1,20 @@
+name: Set up Rust
+description: Installs the toolchain that rust-toolchain.toml names. A build warning stays a warning.
+
+inputs:
+  target:
+    description: A target to install, for a build that is not for the system of the runner.
+    default: ""
+  cache:
+    description: Whether to restore the Rust cache. Only a run on master saves it.
+    default: "true"
+
+runs:
+  using: composite
+  steps:
+    - uses: actions-rust-lang/setup-rust-toolchain@v2
+      with:
+        build-warnings: warn
+        target: ${{ inputs.target }}
+        cache: ${{ inputs.cache }}
+        cache-save-if: ${{ github.ref == 'refs/heads/master' }}

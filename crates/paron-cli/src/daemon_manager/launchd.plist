@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>Label</key>
+  <string>{{ label }}</string>
+
+  <key>UserName</key>
+  <string>{{ user }}</string>
+
+  <key>ProgramArguments</key>
+  <array>
+    {%- for argument in program_arguments %}
+    <string>{{ argument }}</string>
+    {%- endfor %}
+  </array>
+
+  {%- if !settings.is_empty() %}
+  <key>EnvironmentVariables</key>
+  <dict>
+    {%- for (name, value) in settings %}
+    <key>{{ name }}</key>
+    <string>{{ value }}</string>
+    {%- endfor %}
+  </dict>
+  {%- endif %}
+
+  <key>RunAtLoad</key>
+  <true/>
+
+  <key>ExitTimeOut</key>
+  <integer>{{ stop_seconds }}</integer>
+  
+  <key>KeepAlive</key>
+  <dict>
+    <key>SuccessfulExit</key>
+    <false/>
+  </dict>
+</dict>
+</plist>

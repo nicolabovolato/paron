@@ -1,0 +1,81 @@
+services:
+  traefik:
+    image: traefik:v3
+    restart: unless-stopped
+    depends_on:
+      - paron-server
+    command:
+      - --entrypoints.https.address=:443
+      - --providers.file.filename=/etc/traefik/paron.yml
+    configs:
+      - source: traefik
+        target: /etc/traefik/paron.yml
+    ports:
+      - "443:443/tcp"
+    networks:
+      - paron
+
+  paron-server-init:
+    image: ghcr.io/nicolabovolato/paron:latest
+    command: ["server", "bootstrap"]
+    volumes:
+      - paron-server-data:/data
+    network_mode: none
+
+  paron-server:
+    image: ghcr.io/nicolabovolato/paron:latest
+    command: ["server", "run"]
+    restart: unless-stopped
+    stop_grace_period: 30s
+    depends_on:
+      paron-server-init:
+        condition: service_completed_successfully
+    read_only: true
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    tmpfs:
+      - /tmp
+    volumes:
+      - paron-server-data:/data
+    # The proxy carries only TCP, so a tunnel uses TLS over TCP. To give tunnels QUIC, publish the
+    # UDP port from Paron itself:
+    # ports:
+    #   - "443:8443/udp"
+    networks:
+      - paron
+    environment:
+      PARON_PUBLIC_URL: https://paron.example.com
+      PARON_LETSENCRYPT: production
+      PARON_ACME_CONTACT: admin@example.com
+      # The network of the proxy. Paron reads the PROXY protocol header only from these addresses.
+      PARON_TRUSTED_PROXIES: 172.30.0.0/24
+
+networks:
+  paron:
+    ipam:
+      config:
+        - subnet: 172.30.0.0/24
+
+volumes:
+  paron-server-data:
+
+configs:
+  traefik:
+    content: |
+      tcp:
+        routers:
+          paron:
+            entryPoints:
+              - https
+            rule: HostSNI(`*`)
+            service: paron
+        services:
+          paron:
+            loadBalancer:
+              servers:
+                - address: paron-server:8443
+              # proxyProtocol adds the PROXY protocol header.
+              proxyProtocol:
+                version: 2

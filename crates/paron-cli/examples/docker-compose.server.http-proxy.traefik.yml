@@ -1,0 +1,118 @@
+services:
+  traefik:
+    image: traefik:v3
+    restart: unless-stopped
+    depends_on:
+      - paron-server
+    command:
+      - --entrypoints.https.address=:443
+      - --providers.file.filename=/etc/traefik/paron.yml
+      # Traefik gets the certificate from Let's Encrypt. Set your e-mail address here.
+      - --certificatesresolvers.letsencrypt.acme.tlschallenge=true
+      - --certificatesresolvers.letsencrypt.acme.email=admin@example.com
+      - --certificatesresolvers.letsencrypt.acme.storage=/acme/acme.json
+    configs:
+      - source: traefik
+        target: /etc/traefik/paron.yml
+    volumes:
+      - traefik-acme:/acme
+    ports:
+      - "443:443/tcp"
+    networks:
+      - paron
+
+  paron-server-init:
+    image: ghcr.io/nicolabovolato/paron:latest
+    command: ["server", "bootstrap"]
+    volumes:
+      - paron-server-data:/data
+    network_mode: none
+
+  paron-server:
+    image: ghcr.io/nicolabovolato/paron:latest
+    command: ["server", "run"]
+    restart: unless-stopped
+    stop_grace_period: 30s
+    depends_on:
+      paron-server-init:
+        condition: service_completed_successfully
+    read_only: true
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    tmpfs:
+      - /tmp
+    volumes:
+      - paron-server-data:/data
+    # The proxy carries only TCP, so a tunnel uses TLS over TCP. To give tunnels QUIC, publish the
+    # UDP port from Paron itself:
+    # ports:
+    #   - "443:8443/udp"
+    networks:
+      - paron
+    environment:
+      PARON_PUBLIC_URL: https://paron.example.com
+      # The network of the proxy. The proxy passes tunnels through with the PROXY protocol header,
+      # and it sends the web UI as HTTP requests with the X-Forwarded-For header.
+      PARON_TRUSTED_PROXIES: 172.30.0.0/24
+      PARON_TRUSTED_L7_PROXIES: 172.30.0.0/24
+
+networks:
+  paron:
+    ipam:
+      config:
+        - subnet: 172.30.0.0/24
+
+volumes:
+  paron-server-data:
+  traefik-acme:
+
+configs:
+  traefik:
+    content: |
+      tcp:
+        routers:
+          # A tunnel announces the protocol ptp1. It goes to Paron as it is.
+          tunnels:
+            entryPoints:
+              - https
+            rule: HostSNI(`*`) && ALPN(`ptp1`)
+            service: tunnels
+            tls:
+              passthrough: true
+        services:
+          tunnels:
+            loadBalancer:
+              servers:
+                - address: paron-server:8443
+              proxyProtocol:
+                version: 2
+      http:
+        routers:
+          web:
+            entryPoints:
+              - https
+            # Set your domain here.
+            rule: Host(`paron.example.com`)
+            service: web
+            middlewares:
+              - client-address
+            tls:
+              certResolver: letsencrypt
+        middlewares:
+          # Traefik sets X-Forwarded-For and X-Real-IP. Paron also reads Forwarded, so remove it.
+          client-address:
+            headers:
+              customRequestHeaders:
+                Forwarded: ""
+        services:
+          web:
+            loadBalancer:
+              serversTransport: paron
+              servers:
+                - url: https://paron-server:8443
+        serversTransports:
+          # Paron serves HTTPS only, with its own certificate.
+          paron:
+            insecureSkipVerify: true

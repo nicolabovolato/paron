@@ -1,0 +1,179 @@
+---
+title: Trusted proxies
+description: Tell Paron which proxies it can trust for the address of the client.
+sidebar:
+  order: 5
+---
+
+import { Code, TabItem, Tabs } from "@astrojs/starlight/components";
+import tcpHaproxy from "../../../../../../../crates/paron-cli/examples/docker-compose.server.tcp-proxy.haproxy.yml?raw";
+import tcpNginx from "../../../../../../../crates/paron-cli/examples/docker-compose.server.tcp-proxy.nginx.yml?raw";
+import tcpTraefik from "../../../../../../../crates/paron-cli/examples/docker-compose.server.tcp-proxy.traefik.yml?raw";
+import httpNginx from "../../../../../../../crates/paron-cli/examples/docker-compose.server.http-proxy.nginx.yml?raw";
+import httpTraefik from "../../../../../../../crates/paron-cli/examples/docker-compose.server.http-proxy.traefik.yml?raw";
+
+import ClientAddress from "./proxy-client-address.svg";
+import TcpProxy from "./proxy-tcp.svg";
+import HttpProxy from "./proxy-http.svg";
+
+export const marked = [/PARON_TRUSTED_(L7_)?PROXIES: .*/g, /subnet: .*/g];
+
+Paron limits the requests and the connections from each client address.
+
+When a proxy is in front of Paron, all connections come from the address of the proxy. Paron then
+counts all users as one client, and the requests of one user can use the limit of all of them.
+
+<div class="not-content">
+  <ClientAddress />
+</div>
+
+To prevent this, tell Paron which proxies to trust. Paron then gets the address of each client from
+the proxy.
+
+## TCP proxies (L4)
+
+A TCP proxy passes the TLS connection to Paron and does not read it.
+
+<div class="not-content">
+  <TcpProxy />
+</div>
+
+To give Paron the address of the client, the proxy must send the PROXY protocol header at the start
+of each connection. Paron reads version 1 and version 2 of this header. Give Paron the address of
+the proxy:
+
+```sh
+paron server run --trusted-proxies 10.0.0.7,192.168.0.0/24
+```
+
+| Sender                     | PROXY header | Result                                         |
+| -------------------------- | ------------ | ---------------------------------------------- |
+| In `--trusted-proxies`     | Yes          | Paron uses the client address from the header. |
+| In `--trusted-proxies`     | No           | Paron uses the address of the sender.          |
+| Not in `--trusted-proxies` | Yes          | The connection fails.                          |
+| Not in `--trusted-proxies` | No           | Paron uses the address of the sender.          |
+
+When `--trusted-proxies` has a value, Paron logs the warning
+`not a trusted L4 proxy, PROXY protocol forwarding is ignored` for the first connection from an
+address that is not in the list. The warning shows one time, with or without a PROXY header.
+
+No other setting is necessary. Paron gets its certificate and accepts tunnels through the proxy.
+
+### Examples
+
+<Tabs>
+  <TabItem label="HAProxy">
+    <Code
+      code={tcpHaproxy}
+      lang="yaml"
+      title="docker-compose.yml"
+      mark={marked}
+    />
+  </TabItem>
+  <TabItem label="nginx">
+    <Code
+      code={tcpNginx}
+      lang="yaml"
+      title="docker-compose.yml"
+      mark={marked}
+    />
+  </TabItem>
+  <TabItem label="Traefik">
+    <Code
+      code={tcpTraefik}
+      lang="yaml"
+      title="docker-compose.yml"
+      mark={marked}
+    />
+  </TabItem>
+</Tabs>
+
+Save the file as `docker-compose.yml`, set `PARON_PUBLIC_URL`, and start the services:
+
+```sh
+docker compose up -d
+```
+
+### UDP
+
+A tunnel tries QUIC first, and QUIC uses UDP. See
+[Transport](/docs/tunnels/how-a-tunnel-works/#transport). These proxies carry only TCP, so you have
+two options:
+
+| Option                               | Result                                                                     |
+| ------------------------------------ | -------------------------------------------------------------------------- |
+| Publish only the proxy               | Paron is not exposed directly. Tunnels use TLS over TCP through the proxy. |
+| Also publish UDP port 443 from Paron | Tunnels use QUIC. Paron is exposed directly on that port.                  |
+
+Each example has the lines for the second option as a comment.
+
+## HTTP proxies (L7)
+
+An HTTP proxy ends the TLS connection of the browser and opens its own connection to Paron.
+
+- The browser gets the certificate of the proxy. So the proxy needs the public certificate, and
+  Paron uses [its own certificate](/docs/server/certificates/#self-signed-certificate-authority).
+- Paron gets the address of the proxy. The proxy sends the address of the client in a header.
+- A tunnel is not HTTP, so the proxy cannot end its TLS connection. For tunnels, the proxy must be a
+  [TCP proxy](#tcp-proxies-l4).
+
+<div class="not-content">
+  <HttpProxy />
+</div>
+
+The proxy sends connections of both kinds, so give Paron its address in both lists:
+
+```sh
+paron server run \
+  --trusted-l7-proxies 10.0.0.7 \
+  --trusted-proxies 10.0.0.7
+```
+
+| Connection | The proxy must                                               | Reason                                                                                                      |
+| ---------- | ------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------- |
+| Web UI     | Connect to Paron with HTTPS                                  | Paron serves HTTPS only. In a private network, the proxy can accept the certificate of Paron with no check. |
+| Web UI     | Pass WebSocket connections                                   | The terminal is a WebSocket.                                                                                |
+| Web UI     | Set or remove the address headers                            | Paron reads the client address from them.                                                                   |
+| Tunnel     | Pass the connection as it is, with the PROXY protocol header | The machine accepts only the key of Paron.                                                                  |
+
+The proxy finds a tunnel by the protocol name in the first TLS message. A tunnel announces `ptp1`.
+
+Paron reads the client address from three headers: `X-Forwarded-For`, `Forwarded` and `X-Real-IP`.
+It reads them only when the connection comes from an address in `--trusted-l7-proxies`.
+
+A header can have a list of addresses, one for each proxy that the request went through. Paron
+starts at the end of the list and uses the first address that is not in `--trusted-l7-proxies`.
+
+:::caution
+The proxy must set or remove all three headers. If it passes a header from the client, the client
+can send a false address.
+:::
+
+### Examples
+
+<Tabs>
+  <TabItem label="nginx">
+    <Code
+      code={httpNginx}
+      lang="yaml"
+      title="docker-compose.yml"
+      mark={marked}
+    />
+  </TabItem>
+  <TabItem label="Traefik">
+    <Code
+      code={httpTraefik}
+      lang="yaml"
+      title="docker-compose.yml"
+      mark={marked}
+    />
+  </TabItem>
+</Tabs>
+
+Save the file as `docker-compose.yml`, set `PARON_PUBLIC_URL`, and start the services:
+
+```sh
+docker compose up -d
+```
+
+The UDP port is a comment in these files too, for the same reason as above.

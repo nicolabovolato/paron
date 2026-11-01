@@ -1,0 +1,48 @@
+---
+title: Set up a tunnel with Docker
+description: Run the tunnel of a machine with Docker Compose.
+sidebar:
+  order: 3
+---
+
+import { Code } from "@astrojs/starlight/components";
+import compose from "../../../../../../../crates/paron-cli/examples/docker-compose.tunnel.yml?raw";
+
+You need the role Administrator or Operator.
+
+## Compose file
+
+<Code code={compose} lang="yaml" title="docker-compose.tunnel.yml" />
+
+## Start the tunnel
+
+1. In the web UI, add the machine with the connection **Tunneled**.
+
+2. In the menu of the machine, select **Set up tunnel**, and copy the token. Paron shows the token
+   only once. The token is valid for 15 minutes and for one use.
+
+3. On the machine, save the file above as `docker-compose.tunnel.yml`.
+
+4. In the service `paron-tunnel-init`, set `PARON_TUNNEL_TOKEN` to the token. In the service
+   `paron-tunnel`, set `PARON_TUNNEL_PORTS` to the ports that the server can reach. Include the SSH
+   port of the machine.
+
+5. Start the services.
+
+   ```sh
+   docker compose -f docker-compose.tunnel.yml up -d
+   ```
+
+The file has two services. `paron-tunnel-init` runs `paron tunnel bootstrap` one time and registers
+the machine. `paron-tunnel` runs `paron tunnel run`.
+
+## Sockets
+
+The container does not see the sockets of the host. To allow a socket, mount it into the service
+`paron-tunnel`. The container runs as the user `65532`, so this user must have permission to use
+the socket.
+
+## Host network
+
+The tunnel connects only to the loopback address of the machine. For this reason the container
+uses the network of the host (`network_mode: host`).

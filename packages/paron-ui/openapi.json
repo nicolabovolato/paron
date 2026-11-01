@@ -1,0 +1,3758 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Paron API",
+    "description": "",
+    "license": {
+      "name": "PolyForm Shield License 1.0.0",
+      "url": "https://polyformproject.org/licenses/shield/1.0.0"
+    },
+    "version": "0.0.0"
+  },
+  "paths": {
+    "/api/auth/sign-in": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "operationId": "start_sign_in",
+        "parameters": [
+          {
+            "name": "step_up",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "headers": {
+              "Set-Cookie": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StartedSignInResponse"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "$ref": "#/components/responses/ApiError"
+          },
+          "5XX": {
+            "$ref": "#/components/responses/ApiError"
+          }
+        }
+      }
+    },
+    "/api/auth/sign-in/verify": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "operationId": "verify_sign_in",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SignInCredentialRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "headers": {
+              "Set-Cookie": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SignInResponse"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "$ref": "#/components/responses/ApiError"
+          },
+          "5XX": {
+            "$ref": "#/components/responses/ApiError"
+          }
+        }
+      }
+    },
+    "/api/auth/session": {
+      "get": {
+        "tags": [
+          "auth"
+        ],
+        "operationId": "read_session",
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserResponse"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "$ref": "#/components/responses/ApiError"
+          },
+          "5XX": {
+            "$ref": "#/components/responses/ApiError"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "auth"
+        ],
+        "operationId": "sign_out",
+        "responses": {
+          "204": {
+            "description": "",
+            "headers": {
+              "Set-Cookie": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "$ref": "#/components/responses/ApiError"
+          },
+          "5XX": {
+            "$ref": "#/components/responses/ApiError"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          }
+        ]
+      }
+    },
+    "/api/auth/recovery": {
+      "get": {
+        "tags": [
+          "auth"
+        ],
+        "operationId": "recovery_options",
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RecoveryOptionsResponse"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "$ref": "#/components/responses/ApiError"
+          },
+          "5XX": {
+            "$ref": "#/components/responses/ApiError"
+          }
+        },
+        "security": [
+          {
+            "recovery_token": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "operationId": "recover_account",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RecoverAccountRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RecoveredAccountResponse"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "$ref": "#/components/responses/ApiError"
+          },
+          "5XX": {
+            "$ref": "#/components/responses/ApiError"
+          }
+        },
+        "security": [
+          {
+            "recovery_token": []
+          }
+        ]
+      }
+    },
+    "/api/account": {
+      "get": {
+        "tags": [
+          "account"
+        ],
+        "operationId": "read_account",
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AccountResponse"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "$ref": "#/components/responses/ApiError"
+          },
+          "5XX": {
+            "$ref": "#/components/responses/ApiError"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          }
+        ]
+      }
+    },
+    "/api/account/credentials": {
+      "get": {
+        "tags": [
+          "account"
+        ],
+        "operationId": "own_credentials",
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CredentialsResponse"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "$ref": "#/components/responses/ApiError"
+          },
+          "5XX": {
+            "$ref": "#/components/responses/ApiError"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "account"
+        ],
+        "operationId": "update_credentials",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateCredentialsRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdateCredentialsResponse"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "$ref": "#/components/responses/ApiError"
+          },
+          "5XX": {
+            "$ref": "#/components/responses/ApiError"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          }
+        ]
+      }
+    },
+    "/api/audit": {
+      "get": {
+        "tags": [
+          "audit"
+        ],
+        "operationId": "list_audit_entries",
+        "parameters": [
+          {
+            "name": "cursor",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "from",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "to",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "entity",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "object",
+              "required": [
+                "type",
+                "id"
+              ],
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "enum": [
+                    "user",
+                    "machine"
+                  ]
+                },
+                "id": {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "role": {
+                  "oneOf": [
+                    {
+                      "type": "string",
+                      "enum": [
+                        "actor_or_target",
+                        "actor",
+                        "target"
+                      ]
+                    }
+                  ],
+                  "default": "actor_or_target"
+                }
+              }
+            },
+            "style": "deepObject",
+            "explode": true
+          },
+          {
+            "name": "type",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "user.signed_in",
+                "user.signed_out",
+                "user.created",
+                "user.updated",
+                "user.deleted",
+                "user.recovery_started",
+                "user.credential_added",
+                "user.credential_removed",
+                "machine.created",
+                "machine.updated",
+                "machine.deleted",
+                "machine.terminal_opened",
+                "machine.terminal_closed"
+              ]
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 10,
+              "maximum": 50,
+              "minimum": 1
+            }
+          },
+          {
+            "name": "order",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "oneOf": [
+                {
+                  "type": "string",
+                  "enum": [
+                    "newest_first",
+                    "oldest_first"
+                  ]
+                }
+              ],
+              "default": "newest_first"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuditPageResponse"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "$ref": "#/components/responses/ApiError"
+          },
+          "5XX": {
+            "$ref": "#/components/responses/ApiError"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          }
+        ]
+      }
+    },
+    "/api/machines": {
+      "get": {
+        "tags": [
+          "machines"
+        ],
+        "operationId": "list_machines",
+        "parameters": [
+          {
+            "name": "search",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "maxLength": 512,
+              "minLength": 0
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 10,
+              "maximum": 50,
+              "minimum": 1
+            }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 0,
+              "minimum": 0
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PageResponse_MachineResponse"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "$ref": "#/components/responses/ApiError"
+          },
+          "5XX": {
+            "$ref": "#/components/responses/ApiError"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "machines"
+        ],
+        "operationId": "create_machine",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MachineRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MachineResponse"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "$ref": "#/components/responses/ApiError"
+          },
+          "5XX": {
+            "$ref": "#/components/responses/ApiError"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          }
+        ]
+      }
+    },
+    "/api/machines/{id}": {
+      "get": {
+        "tags": [
+          "machines"
+        ],
+        "operationId": "read_machine",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MachineResponse"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "$ref": "#/components/responses/ApiError"
+          },
+          "5XX": {
+            "$ref": "#/components/responses/ApiError"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "machines"
+        ],
+        "operationId": "remove_machine",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": ""
+          },
+          "4XX": {
+            "$ref": "#/components/responses/ApiError"
+          },
+          "5XX": {
+            "$ref": "#/components/responses/ApiError"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          }
+        ]
+      },
+      "patch": {
+        "tags": [
+          "machines"
+        ],
+        "operationId": "update_machine",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PartialUpdateMachineRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MachineResponse"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "$ref": "#/components/responses/ApiError"
+          },
+          "5XX": {
+            "$ref": "#/components/responses/ApiError"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          }
+        ]
+      }
+    },
+    "/api/machines/{id}/test-connection": {
+      "post": {
+        "tags": [
+          "machines"
+        ],
+        "operationId": "test_machine_connection",
+        "parameters": [
+          {
+            "name": "protocol",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "ssh"
+              ]
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PartialUpdateMachineRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": ""
+          },
+          "4XX": {
+            "$ref": "#/components/responses/ApiError"
+          },
+          "5XX": {
+            "$ref": "#/components/responses/ApiError"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          }
+        ]
+      }
+    },
+    "/api/machines/test-connection": {
+      "post": {
+        "tags": [
+          "machines"
+        ],
+        "operationId": "test_new_machine_connection",
+        "parameters": [
+          {
+            "name": "protocol",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "ssh"
+              ]
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MachineRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "204": {
+            "description": ""
+          },
+          "4XX": {
+            "$ref": "#/components/responses/ApiError"
+          },
+          "5XX": {
+            "$ref": "#/components/responses/ApiError"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          }
+        ]
+      }
+    },
+    "/api/machines/{id}/enrollment": {
+      "post": {
+        "tags": [
+          "machines"
+        ],
+        "operationId": "issue_machine_enrollment_token",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EnrollmentInvitationResponse"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "$ref": "#/components/responses/ApiError"
+          },
+          "5XX": {
+            "$ref": "#/components/responses/ApiError"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "machines"
+        ],
+        "operationId": "withdraw_machine_enrollment",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": ""
+          },
+          "4XX": {
+            "$ref": "#/components/responses/ApiError"
+          },
+          "5XX": {
+            "$ref": "#/components/responses/ApiError"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          }
+        ]
+      }
+    },
+    "/api/machines/{id}/terminal": {
+      "get": {
+        "tags": [
+          "machines"
+        ],
+        "operationId": "open_machine_terminal",
+        "parameters": [
+          {
+            "name": "cols",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "maximum": 65535,
+              "minimum": 1
+            }
+          },
+          {
+            "name": "rows",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "maximum": 65535,
+              "minimum": 1
+            }
+          },
+          {
+            "name": "terminal",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "xterm-truecolor"
+              ]
+            }
+          },
+          {
+            "name": "protocol",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "ssh"
+              ]
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "101": {
+            "description": ""
+          },
+          "4XX": {
+            "$ref": "#/components/responses/ApiError"
+          },
+          "5XX": {
+            "$ref": "#/components/responses/ApiError"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          }
+        ]
+      }
+    },
+    "/api/users": {
+      "get": {
+        "tags": [
+          "users"
+        ],
+        "operationId": "list_users",
+        "parameters": [
+          {
+            "name": "search",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "maxLength": 512,
+              "minLength": 0
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 10,
+              "maximum": 50,
+              "minimum": 1
+            }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 0,
+              "minimum": 0
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PageResponse_UserResponse"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "$ref": "#/components/responses/ApiError"
+          },
+          "5XX": {
+            "$ref": "#/components/responses/ApiError"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "users"
+        ],
+        "operationId": "create_user",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateUserRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserResponse"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "$ref": "#/components/responses/ApiError"
+          },
+          "5XX": {
+            "$ref": "#/components/responses/ApiError"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          }
+        ]
+      }
+    },
+    "/api/users/{id}": {
+      "get": {
+        "tags": [
+          "users"
+        ],
+        "operationId": "read_user",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserResponse"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "$ref": "#/components/responses/ApiError"
+          },
+          "5XX": {
+            "$ref": "#/components/responses/ApiError"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "users"
+        ],
+        "operationId": "remove_user",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": ""
+          },
+          "4XX": {
+            "$ref": "#/components/responses/ApiError"
+          },
+          "5XX": {
+            "$ref": "#/components/responses/ApiError"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          }
+        ]
+      },
+      "patch": {
+        "tags": [
+          "users"
+        ],
+        "operationId": "update_user",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PartialUpdateUserRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserResponse"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "$ref": "#/components/responses/ApiError"
+          },
+          "5XX": {
+            "$ref": "#/components/responses/ApiError"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          }
+        ]
+      }
+    },
+    "/api/users/{id}/credentials": {
+      "get": {
+        "tags": [
+          "users"
+        ],
+        "operationId": "user_credentials",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CredentialsResponse"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "$ref": "#/components/responses/ApiError"
+          },
+          "5XX": {
+            "$ref": "#/components/responses/ApiError"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          }
+        ]
+      }
+    },
+    "/api/users/{id}/recovery": {
+      "post": {
+        "tags": [
+          "users"
+        ],
+        "operationId": "start_recovery",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RecoveryLinkResponse"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "$ref": "#/components/responses/ApiError"
+          },
+          "5XX": {
+            "$ref": "#/components/responses/ApiError"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          }
+        ]
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "AcceptedCredentialResponse": {
+        "oneOf": [
+          {
+            "type": "object",
+            "required": [
+              "kind"
+            ],
+            "properties": {
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "password"
+                ]
+              }
+            }
+          },
+          {
+            "type": "object",
+            "required": [
+              "kind"
+            ],
+            "properties": {
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "totp"
+                ]
+              }
+            }
+          },
+          {
+            "type": "object",
+            "required": [
+              "kind"
+            ],
+            "properties": {
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "recovery_code"
+                ]
+              }
+            }
+          },
+          {
+            "type": "object",
+            "required": [
+              "options",
+              "kind"
+            ],
+            "properties": {
+              "options": {
+                "$ref": "#/components/schemas/PasskeyRequestOptionsJson"
+              },
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "passkey"
+                ]
+              }
+            }
+          }
+        ]
+      },
+      "AccountResponse": {
+        "type": "object",
+        "required": [
+          "id",
+          "username",
+          "display_name",
+          "created_at"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "username": {
+            "$ref": "#/components/schemas/Username"
+          },
+          "display_name": {
+            "$ref": "#/components/schemas/DisplayName"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "ApiError": {
+        "type": "object",
+        "required": [
+          "status"
+        ],
+        "properties": {
+          "status": {
+            "type": "integer",
+            "format": "u-int16",
+            "minimum": 0
+          },
+          "code": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/ErrorCode"
+              }
+            ]
+          },
+          "detail": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "validation_errors": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "additionalProperties": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "propertyNames": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "AuditActorResponse": {
+        "oneOf": [
+          {
+            "type": "object",
+            "required": [
+              "type"
+            ],
+            "properties": {
+              "type": {
+                "type": "string",
+                "enum": [
+                  "system"
+                ]
+              }
+            }
+          },
+          {
+            "type": "object",
+            "required": [
+              "id",
+              "name",
+              "type"
+            ],
+            "properties": {
+              "id": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "name": {
+                "type": "string"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "user"
+                ]
+              }
+            }
+          },
+          {
+            "type": "object",
+            "required": [
+              "id",
+              "name",
+              "type"
+            ],
+            "properties": {
+              "id": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "name": {
+                "type": "string"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "machine"
+                ]
+              }
+            }
+          }
+        ]
+      },
+      "AuditAuthenticationMethod": {
+        "type": "string",
+        "enum": [
+          "password",
+          "managed_keypair",
+          "imported_keypair"
+        ]
+      },
+      "AuditConnectivity": {
+        "oneOf": [
+          {
+            "type": "object",
+            "required": [
+              "host",
+              "kind"
+            ],
+            "properties": {
+              "host": {
+                "type": "string"
+              },
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "direct"
+                ]
+              }
+            }
+          },
+          {
+            "type": "object",
+            "required": [
+              "enrollment",
+              "kind"
+            ],
+            "properties": {
+              "enrollment": {
+                "$ref": "#/components/schemas/AuditEnrollment"
+              },
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "tunneled"
+                ]
+              }
+            }
+          }
+        ]
+      },
+      "AuditEnrollment": {
+        "oneOf": [
+          {
+            "type": "object",
+            "required": [
+              "state"
+            ],
+            "properties": {
+              "state": {
+                "type": "string",
+                "enum": [
+                  "not_enrolled"
+                ]
+              }
+            }
+          },
+          {
+            "type": "object",
+            "required": [
+              "expires_at",
+              "state"
+            ],
+            "properties": {
+              "expires_at": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "state": {
+                "type": "string",
+                "enum": [
+                  "invited"
+                ]
+              }
+            }
+          },
+          {
+            "type": "object",
+            "required": [
+              "state"
+            ],
+            "properties": {
+              "state": {
+                "type": "string",
+                "enum": [
+                  "enrolled"
+                ]
+              }
+            }
+          }
+        ]
+      },
+      "AuditEntityResponse": {
+        "type": "object",
+        "required": [
+          "type",
+          "id",
+          "name"
+        ],
+        "properties": {
+          "type": {
+            "$ref": "#/components/schemas/EntityType"
+          },
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string"
+          }
+        }
+      },
+      "AuditEntryResponse": {
+        "type": "object",
+        "required": [
+          "id",
+          "created_at",
+          "actor",
+          "target",
+          "event"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "actor": {
+            "$ref": "#/components/schemas/AuditActorResponse"
+          },
+          "target": {
+            "$ref": "#/components/schemas/AuditEntityResponse"
+          },
+          "event": {
+            "$ref": "#/components/schemas/AuditEventResponse"
+          }
+        }
+      },
+      "AuditEventResponse": {
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/AuditPayload"
+          },
+          {
+            "$ref": "#/components/schemas/UnknownAuditEvent"
+          }
+        ]
+      },
+      "AuditMachine": {
+        "type": "object",
+        "required": [
+          "name",
+          "connectivity",
+          "protocols"
+        ],
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "connectivity": {
+            "$ref": "#/components/schemas/AuditConnectivity"
+          },
+          "protocols": {
+            "$ref": "#/components/schemas/AuditProtocols"
+          }
+        }
+      },
+      "AuditPageResponse": {
+        "type": "object",
+        "required": [
+          "items"
+        ],
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AuditEntryResponse"
+            }
+          }
+        }
+      },
+      "AuditPayload": {
+        "oneOf": [
+          {
+            "type": "object",
+            "required": [
+              "payload",
+              "type"
+            ],
+            "properties": {
+              "payload": {
+                "type": "object",
+                "required": [
+                  "session_id",
+                  "methods"
+                ],
+                "properties": {
+                  "session_id": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "methods": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                }
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "user.signed_in"
+                ]
+              }
+            }
+          },
+          {
+            "type": "object",
+            "required": [
+              "payload",
+              "type"
+            ],
+            "properties": {
+              "payload": {
+                "type": "object",
+                "required": [
+                  "session_id"
+                ],
+                "properties": {
+                  "session_id": {
+                    "type": "string",
+                    "format": "uuid"
+                  }
+                }
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "user.signed_out"
+                ]
+              }
+            }
+          },
+          {
+            "type": "object",
+            "required": [
+              "payload",
+              "type"
+            ],
+            "properties": {
+              "payload": {
+                "type": "object",
+                "required": [
+                  "user"
+                ],
+                "properties": {
+                  "user": {
+                    "$ref": "#/components/schemas/AuditUser"
+                  }
+                }
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "user.created"
+                ]
+              }
+            }
+          },
+          {
+            "type": "object",
+            "required": [
+              "payload",
+              "type"
+            ],
+            "properties": {
+              "payload": {
+                "type": "object",
+                "required": [
+                  "before",
+                  "after"
+                ],
+                "properties": {
+                  "before": {
+                    "$ref": "#/components/schemas/AuditUser"
+                  },
+                  "after": {
+                    "$ref": "#/components/schemas/AuditUser"
+                  }
+                }
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "user.updated"
+                ]
+              }
+            }
+          },
+          {
+            "type": "object",
+            "required": [
+              "payload",
+              "type"
+            ],
+            "properties": {
+              "payload": {
+                "type": "object"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "user.deleted"
+                ]
+              }
+            }
+          },
+          {
+            "type": "object",
+            "required": [
+              "payload",
+              "type"
+            ],
+            "properties": {
+              "payload": {
+                "type": "object",
+                "required": [
+                  "expires_at"
+                ],
+                "properties": {
+                  "expires_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  }
+                }
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "user.recovery_started"
+                ]
+              }
+            }
+          },
+          {
+            "type": "object",
+            "required": [
+              "payload",
+              "type"
+            ],
+            "properties": {
+              "payload": {
+                "type": "object",
+                "required": [
+                  "kind"
+                ],
+                "properties": {
+                  "kind": {
+                    "type": "string"
+                  }
+                }
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "user.credential_added"
+                ]
+              }
+            }
+          },
+          {
+            "type": "object",
+            "required": [
+              "payload",
+              "type"
+            ],
+            "properties": {
+              "payload": {
+                "type": "object",
+                "required": [
+                  "kind"
+                ],
+                "properties": {
+                  "kind": {
+                    "type": "string"
+                  }
+                }
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "user.credential_removed"
+                ]
+              }
+            }
+          },
+          {
+            "type": "object",
+            "required": [
+              "payload",
+              "type"
+            ],
+            "properties": {
+              "payload": {
+                "type": "object",
+                "required": [
+                  "machine"
+                ],
+                "properties": {
+                  "machine": {
+                    "$ref": "#/components/schemas/AuditMachine"
+                  }
+                }
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "machine.created"
+                ]
+              }
+            }
+          },
+          {
+            "type": "object",
+            "required": [
+              "payload",
+              "type"
+            ],
+            "properties": {
+              "payload": {
+                "type": "object",
+                "required": [
+                  "before",
+                  "after",
+                  "credentials_replaced"
+                ],
+                "properties": {
+                  "before": {
+                    "$ref": "#/components/schemas/AuditMachine"
+                  },
+                  "after": {
+                    "$ref": "#/components/schemas/AuditMachine"
+                  },
+                  "credentials_replaced": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "uniqueItems": true
+                  }
+                }
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "machine.updated"
+                ]
+              }
+            }
+          },
+          {
+            "type": "object",
+            "required": [
+              "payload",
+              "type"
+            ],
+            "properties": {
+              "payload": {
+                "type": "object"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "machine.deleted"
+                ]
+              }
+            }
+          },
+          {
+            "type": "object",
+            "required": [
+              "payload",
+              "type"
+            ],
+            "properties": {
+              "payload": {
+                "type": "object",
+                "required": [
+                  "session_id",
+                  "protocol"
+                ],
+                "properties": {
+                  "session_id": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "protocol": {
+                    "type": "string"
+                  }
+                }
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "machine.terminal_opened"
+                ]
+              }
+            }
+          },
+          {
+            "type": "object",
+            "required": [
+              "payload",
+              "type"
+            ],
+            "properties": {
+              "payload": {
+                "type": "object",
+                "required": [
+                  "session_id"
+                ],
+                "properties": {
+                  "session_id": {
+                    "type": "string",
+                    "format": "uuid"
+                  }
+                }
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "machine.terminal_closed"
+                ]
+              }
+            }
+          }
+        ]
+      },
+      "AuditProtocols": {
+        "type": "object",
+        "properties": {
+          "ssh": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/AuditSsh"
+              }
+            ]
+          }
+        }
+      },
+      "AuditSsh": {
+        "type": "object",
+        "required": [
+          "user",
+          "port",
+          "host_key_fingerprint",
+          "authentication"
+        ],
+        "properties": {
+          "user": {
+            "type": "string"
+          },
+          "port": {
+            "type": "integer",
+            "format": "u-int16",
+            "minimum": 0
+          },
+          "host_key_fingerprint": {
+            "type": "string"
+          },
+          "authentication": {
+            "$ref": "#/components/schemas/AuditAuthenticationMethod"
+          }
+        }
+      },
+      "AuditUser": {
+        "type": "object",
+        "required": [
+          "username",
+          "display_name",
+          "roles",
+          "status"
+        ],
+        "properties": {
+          "username": {
+            "type": "string"
+          },
+          "display_name": {
+            "type": "string"
+          },
+          "roles": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "status": {
+            "$ref": "#/components/schemas/AuditUserStatus"
+          }
+        }
+      },
+      "AuditUserStatus": {
+        "type": "string",
+        "enum": [
+          "active",
+          "suspended"
+        ]
+      },
+      "AuthenticationMethod": {
+        "type": "string",
+        "enum": [
+          "password",
+          "totp",
+          "passkey",
+          "recovery_code"
+        ]
+      },
+      "CapabilitiesResponse": {
+        "type": "object",
+        "required": [
+          "connection_test",
+          "terminal"
+        ],
+        "properties": {
+          "connection_test": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ProviderResponse"
+            }
+          },
+          "terminal": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ProviderResponse"
+            }
+          }
+        }
+      },
+      "ClientPublicKey": {
+        "type": "string",
+        "description": "The key the machine presented when it enrolled."
+      },
+      "ConnectTimeout": {
+        "type": "integer",
+        "maximum": 60,
+        "minimum": 1
+      },
+      "ConnectivityRequest": {
+        "oneOf": [
+          {
+            "type": "object",
+            "required": [
+              "host",
+              "kind"
+            ],
+            "properties": {
+              "host": {
+                "$ref": "#/components/schemas/Host"
+              },
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "direct"
+                ]
+              }
+            }
+          },
+          {
+            "type": "object",
+            "required": [
+              "kind"
+            ],
+            "properties": {
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "tunneled"
+                ]
+              }
+            }
+          }
+        ]
+      },
+      "ConnectivityResponse": {
+        "oneOf": [
+          {
+            "type": "object",
+            "required": [
+              "host",
+              "kind"
+            ],
+            "properties": {
+              "host": {
+                "$ref": "#/components/schemas/Host"
+              },
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "direct"
+                ]
+              }
+            }
+          },
+          {
+            "type": "object",
+            "required": [
+              "enrollment",
+              "kind"
+            ],
+            "properties": {
+              "enrollment": {
+                "$ref": "#/components/schemas/EnrollmentResponse"
+              },
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "tunneled"
+                ]
+              }
+            }
+          }
+        ]
+      },
+      "CreateUserRequest": {
+        "type": "object",
+        "required": [
+          "username",
+          "display_name",
+          "roles"
+        ],
+        "properties": {
+          "username": {
+            "$ref": "#/components/schemas/Username"
+          },
+          "display_name": {
+            "$ref": "#/components/schemas/DisplayName"
+          },
+          "roles": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Role"
+            }
+          }
+        }
+      },
+      "CredentialUpdateResultResponse": {
+        "oneOf": [
+          {
+            "type": "object",
+            "required": [
+              "kind"
+            ],
+            "properties": {
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "done"
+                ]
+              }
+            }
+          },
+          {
+            "type": "object",
+            "required": [
+              "secret",
+              "key_uri",
+              "kind"
+            ],
+            "properties": {
+              "secret": {
+                "type": "string"
+              },
+              "key_uri": {
+                "type": "string"
+              },
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "totp_registration_started"
+                ]
+              }
+            }
+          },
+          {
+            "type": "object",
+            "required": [
+              "options",
+              "kind"
+            ],
+            "properties": {
+              "options": {
+                "$ref": "#/components/schemas/PasskeyCreationOptionsJson"
+              },
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "passkey_creation_options"
+                ]
+              }
+            }
+          }
+        ]
+      },
+      "CredentialsResponse": {
+        "type": "object",
+        "required": [
+          "passkeys"
+        ],
+        "properties": {
+          "password": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/PasswordCredentialResponse"
+              }
+            ]
+          },
+          "totp": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/TotpCredentialResponse"
+              }
+            ]
+          },
+          "passkeys": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PasskeyCredentialResponse"
+            }
+          },
+          "recovery_codes": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/RecoveryCodesResponse"
+              }
+            ]
+          }
+        }
+      },
+      "DisplayName": {
+        "type": "string",
+        "maxLength": 64,
+        "minLength": 1
+      },
+      "EnrollmentInvitationResponse": {
+        "type": "object",
+        "required": [
+          "token",
+          "expires_at"
+        ],
+        "properties": {
+          "token": {
+            "type": "string"
+          },
+          "expires_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "EnrollmentResponse": {
+        "oneOf": [
+          {
+            "type": "object",
+            "required": [
+              "state"
+            ],
+            "properties": {
+              "state": {
+                "type": "string",
+                "enum": [
+                  "not_enrolled"
+                ]
+              }
+            }
+          },
+          {
+            "type": "object",
+            "required": [
+              "expires_at",
+              "state"
+            ],
+            "properties": {
+              "expires_at": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "state": {
+                "type": "string",
+                "enum": [
+                  "invited"
+                ]
+              }
+            }
+          },
+          {
+            "type": "object",
+            "required": [
+              "public_key",
+              "state"
+            ],
+            "properties": {
+              "public_key": {
+                "$ref": "#/components/schemas/ClientPublicKey"
+              },
+              "state": {
+                "type": "string",
+                "enum": [
+                  "enrolled"
+                ]
+              }
+            }
+          }
+        ]
+      },
+      "EntityType": {
+        "type": "string",
+        "enum": [
+          "user",
+          "machine"
+        ]
+      },
+      "ErrorCode": {
+        "type": "string",
+        "description": "Auto-generated discriminant enum variants",
+        "enum": [
+          "insufficient_user_authentication",
+          "too_many_failed_attempts"
+        ]
+      },
+      "Host": {
+        "type": "string",
+        "description": "A hostname or IP address, without a scheme or a path.",
+        "maxLength": 255,
+        "pattern": "^[^\\s/\\\\@?#]+$",
+        "x-pattern-message": "A hostname or IP address, without a scheme or a path."
+      },
+      "KeyAlgorithm": {
+        "type": "string",
+        "enum": [
+          "ed25519"
+        ]
+      },
+      "KeySource": {
+        "type": "string",
+        "enum": [
+          "managed",
+          "imported"
+        ]
+      },
+      "KeySourceRequest": {
+        "oneOf": [
+          {
+            "type": "object",
+            "required": [
+              "algorithm",
+              "kind"
+            ],
+            "properties": {
+              "algorithm": {
+                "$ref": "#/components/schemas/KeyAlgorithm"
+              },
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "managed"
+                ]
+              }
+            }
+          },
+          {
+            "type": "object",
+            "required": [
+              "private_key",
+              "kind"
+            ],
+            "properties": {
+              "private_key": {
+                "$ref": "#/components/schemas/PrivateKey"
+              },
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "imported"
+                ]
+              }
+            }
+          }
+        ]
+      },
+      "MachineName": {
+        "type": "string",
+        "maxLength": 64,
+        "minLength": 1
+      },
+      "MachineRequest": {
+        "type": "object",
+        "required": [
+          "name",
+          "connectivity",
+          "protocols"
+        ],
+        "properties": {
+          "name": {
+            "$ref": "#/components/schemas/MachineName"
+          },
+          "connectivity": {
+            "$ref": "#/components/schemas/ConnectivityRequest"
+          },
+          "protocols": {
+            "$ref": "#/components/schemas/ProtocolsRequest"
+          }
+        }
+      },
+      "MachineResponse": {
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "connectivity",
+          "protocols",
+          "capabilities"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "$ref": "#/components/schemas/MachineName"
+          },
+          "connectivity": {
+            "$ref": "#/components/schemas/ConnectivityResponse"
+          },
+          "protocols": {
+            "$ref": "#/components/schemas/ProtocolsResponse"
+          },
+          "capabilities": {
+            "$ref": "#/components/schemas/CapabilitiesResponse"
+          }
+        }
+      },
+      "PageResponse_MachineResponse": {
+        "type": "object",
+        "required": [
+          "items",
+          "total"
+        ],
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "id",
+                "name",
+                "connectivity",
+                "protocols",
+                "capabilities"
+              ],
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "name": {
+                  "$ref": "#/components/schemas/MachineName"
+                },
+                "connectivity": {
+                  "$ref": "#/components/schemas/ConnectivityResponse"
+                },
+                "protocols": {
+                  "$ref": "#/components/schemas/ProtocolsResponse"
+                },
+                "capabilities": {
+                  "$ref": "#/components/schemas/CapabilitiesResponse"
+                }
+              }
+            }
+          },
+          "total": {
+            "type": "integer",
+            "format": "u-int64",
+            "minimum": 0
+          }
+        }
+      },
+      "PageResponse_UserResponse": {
+        "type": "object",
+        "required": [
+          "items",
+          "total"
+        ],
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "id",
+                "username",
+                "display_name",
+                "status",
+                "roles",
+                "permissions",
+                "created_at"
+              ],
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "username": {
+                  "$ref": "#/components/schemas/Username"
+                },
+                "display_name": {
+                  "$ref": "#/components/schemas/DisplayName"
+                },
+                "status": {
+                  "$ref": "#/components/schemas/UserStatus"
+                },
+                "roles": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Role"
+                  }
+                },
+                "permissions": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Permission"
+                  }
+                },
+                "created_at": {
+                  "type": "string",
+                  "format": "date-time"
+                }
+              }
+            }
+          },
+          "total": {
+            "type": "integer",
+            "format": "u-int64",
+            "minimum": 0
+          }
+        }
+      },
+      "PartialProtocolsRequest": {
+        "type": "object",
+        "properties": {
+          "ssh": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/PartialSshRequest"
+              }
+            ]
+          }
+        }
+      },
+      "PartialSshAuthenticationRequest": {
+        "type": "object",
+        "properties": {
+          "host_key": {
+            "$ref": "#/components/schemas/PublicKey"
+          },
+          "method": {
+            "$ref": "#/components/schemas/SshAuthMethodRequest"
+          }
+        }
+      },
+      "PartialSshRequest": {
+        "type": "object",
+        "properties": {
+          "user": {
+            "$ref": "#/components/schemas/SshUser"
+          },
+          "port": {
+            "$ref": "#/components/schemas/Port"
+          },
+          "authentication": {
+            "$ref": "#/components/schemas/PartialSshAuthenticationRequest"
+          },
+          "connect_timeout_seconds": {
+            "$ref": "#/components/schemas/ConnectTimeout"
+          }
+        }
+      },
+      "PartialUpdateMachineRequest": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "$ref": "#/components/schemas/MachineName"
+          },
+          "connectivity": {
+            "$ref": "#/components/schemas/ConnectivityRequest"
+          },
+          "protocols": {
+            "$ref": "#/components/schemas/PartialProtocolsRequest"
+          }
+        }
+      },
+      "PartialUpdateUserRequest": {
+        "type": "object",
+        "properties": {
+          "username": {
+            "$ref": "#/components/schemas/Username"
+          },
+          "display_name": {
+            "$ref": "#/components/schemas/DisplayName"
+          },
+          "roles": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Role"
+            }
+          },
+          "status": {
+            "$ref": "#/components/schemas/UserStatus"
+          }
+        }
+      },
+      "PasskeyAssertionJson": {
+        "type": "object"
+      },
+      "PasskeyCreationOptionsJson": {
+        "type": "object"
+      },
+      "PasskeyCredentialResponse": {
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "created_at",
+          "backed_up"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "$ref": "#/components/schemas/PasskeyName"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "last_used_at": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          },
+          "backed_up": {
+            "type": "boolean"
+          }
+        }
+      },
+      "PasskeyName": {
+        "type": "string",
+        "maxLength": 64,
+        "minLength": 1
+      },
+      "PasskeyRegistrationJson": {
+        "type": "object"
+      },
+      "PasskeyRequestOptionsJson": {
+        "type": "object"
+      },
+      "Password": {
+        "type": "string",
+        "maxLength": 64,
+        "minLength": 12
+      },
+      "PasswordCredentialResponse": {
+        "type": "object",
+        "required": [
+          "updated_at"
+        ],
+        "properties": {
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "Permission": {
+        "type": "string",
+        "enum": [
+          "machine:read",
+          "machine:write",
+          "machine:delete",
+          "machine:operate",
+          "machine:enroll",
+          "user:read",
+          "user:write"
+        ]
+      },
+      "Port": {
+        "type": "integer",
+        "maximum": 65535,
+        "minimum": 1
+      },
+      "PrivateKey": {
+        "type": "string",
+        "description": "An OpenSSH private key, exactly as `ssh-keygen` wrote the file. Must not be passphrase-protected.",
+        "pattern": "^-----BEGIN OPENSSH PRIVATE KEY-----",
+        "x-pattern-message": "An OpenSSH private key, exactly as `ssh-keygen` wrote the file. Must not be passphrase-protected."
+      },
+      "Protocol": {
+        "type": "string",
+        "enum": [
+          "ssh"
+        ]
+      },
+      "ProtocolsRequest": {
+        "type": "object",
+        "properties": {
+          "ssh": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/SshRequest"
+              }
+            ]
+          }
+        }
+      },
+      "ProtocolsResponse": {
+        "type": "object",
+        "properties": {
+          "ssh": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/SshResponse"
+              }
+            ]
+          }
+        }
+      },
+      "ProviderResponse": {
+        "oneOf": [
+          {
+            "type": "object",
+            "required": [
+              "protocol",
+              "kind"
+            ],
+            "properties": {
+              "protocol": {
+                "$ref": "#/components/schemas/Protocol"
+              },
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "protocol"
+                ]
+              }
+            }
+          }
+        ]
+      },
+      "PublicKey": {
+        "type": "string",
+        "description": "An SSH public key, exactly as `ssh-keyscan` prints it: `ssh-ed25519 AAAA...`.",
+        "pattern": "^(ssh|ecdsa|sk)-\\S+\\s+\\S+",
+        "x-pattern-message": "An SSH public key, exactly as `ssh-keyscan` prints it: `ssh-ed25519 AAAA...`."
+      },
+      "RecoverAccountRequest": {
+        "oneOf": [
+          {
+            "type": "object",
+            "required": [
+              "password",
+              "action"
+            ],
+            "properties": {
+              "password": {
+                "$ref": "#/components/schemas/Password"
+              },
+              "action": {
+                "type": "string",
+                "enum": [
+                  "set_password"
+                ]
+              }
+            }
+          },
+          {
+            "type": "object",
+            "required": [
+              "action"
+            ],
+            "properties": {
+              "action": {
+                "type": "string",
+                "enum": [
+                  "start_passkey_registration"
+                ]
+              }
+            }
+          },
+          {
+            "type": "object",
+            "required": [
+              "response",
+              "action"
+            ],
+            "properties": {
+              "response": {
+                "$ref": "#/components/schemas/PasskeyRegistrationJson"
+              },
+              "action": {
+                "type": "string",
+                "enum": [
+                  "finish_passkey_registration"
+                ]
+              }
+            }
+          }
+        ]
+      },
+      "RecoveredAccountResponse": {
+        "oneOf": [
+          {
+            "type": "object",
+            "required": [
+              "options",
+              "kind"
+            ],
+            "properties": {
+              "options": {
+                "$ref": "#/components/schemas/PasskeyCreationOptionsJson"
+              },
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "passkey_creation_options"
+                ]
+              }
+            }
+          },
+          {
+            "type": "object",
+            "required": [
+              "kind"
+            ],
+            "properties": {
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "done"
+                ]
+              }
+            }
+          }
+        ]
+      },
+      "RecoveryCode": {
+        "type": "string",
+        "pattern": "^[0123456789abcdefghjkmnpqrstvwxyz]{10}$"
+      },
+      "RecoveryCodesResponse": {
+        "type": "object",
+        "required": [
+          "generated_at",
+          "remaining"
+        ],
+        "properties": {
+          "generated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "remaining": {
+            "type": "integer",
+            "minimum": 0
+          }
+        }
+      },
+      "RecoveryLinkResponse": {
+        "type": "object",
+        "required": [
+          "token",
+          "public_origin",
+          "expires_at"
+        ],
+        "properties": {
+          "token": {
+            "type": "string"
+          },
+          "public_origin": {
+            "type": "string"
+          },
+          "expires_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "RecoveryOptionsResponse": {
+        "type": "object",
+        "required": [
+          "methods",
+          "expires_at"
+        ],
+        "properties": {
+          "methods": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AuthenticationMethod"
+            }
+          },
+          "expires_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "Role": {
+        "type": "string",
+        "enum": [
+          "administrator",
+          "operator"
+        ]
+      },
+      "SignInCredentialRequest": {
+        "oneOf": [
+          {
+            "type": "object",
+            "required": [
+              "username",
+              "password",
+              "kind"
+            ],
+            "properties": {
+              "username": {
+                "$ref": "#/components/schemas/Username"
+              },
+              "password": {
+                "$ref": "#/components/schemas/Password"
+              },
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "password"
+                ]
+              }
+            }
+          },
+          {
+            "type": "object",
+            "required": [
+              "code",
+              "kind"
+            ],
+            "properties": {
+              "code": {
+                "$ref": "#/components/schemas/TotpCode"
+              },
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "totp"
+                ]
+              }
+            }
+          },
+          {
+            "type": "object",
+            "required": [
+              "code",
+              "kind"
+            ],
+            "properties": {
+              "code": {
+                "$ref": "#/components/schemas/RecoveryCode"
+              },
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "recovery_code"
+                ]
+              }
+            }
+          },
+          {
+            "type": "object",
+            "required": [
+              "response",
+              "kind"
+            ],
+            "properties": {
+              "response": {
+                "$ref": "#/components/schemas/PasskeyAssertionJson"
+              },
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "passkey"
+                ]
+              }
+            }
+          }
+        ]
+      },
+      "SignInResponse": {
+        "type": "object",
+        "properties": {
+          "accepted": {
+            "type": [
+              "array",
+              "null"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/AcceptedCredentialResponse"
+            }
+          }
+        }
+      },
+      "SshAuthMethodRequest": {
+        "oneOf": [
+          {
+            "type": "object",
+            "required": [
+              "password",
+              "kind"
+            ],
+            "properties": {
+              "password": {
+                "$ref": "#/components/schemas/SshPassword"
+              },
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "password"
+                ]
+              }
+            }
+          },
+          {
+            "type": "object",
+            "required": [
+              "source",
+              "kind"
+            ],
+            "properties": {
+              "source": {
+                "$ref": "#/components/schemas/KeySourceRequest"
+              },
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "keypair"
+                ]
+              }
+            }
+          }
+        ]
+      },
+      "SshAuthMethodResponse": {
+        "oneOf": [
+          {
+            "type": "object",
+            "required": [
+              "kind"
+            ],
+            "properties": {
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "password"
+                ]
+              }
+            }
+          },
+          {
+            "type": "object",
+            "required": [
+              "source",
+              "public_key",
+              "kind"
+            ],
+            "properties": {
+              "source": {
+                "$ref": "#/components/schemas/KeySource"
+              },
+              "public_key": {
+                "$ref": "#/components/schemas/PublicKey"
+              },
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "keypair"
+                ]
+              }
+            }
+          }
+        ]
+      },
+      "SshAuthenticationRequest": {
+        "type": "object",
+        "required": [
+          "host_key",
+          "method"
+        ],
+        "properties": {
+          "host_key": {
+            "$ref": "#/components/schemas/PublicKey"
+          },
+          "method": {
+            "$ref": "#/components/schemas/SshAuthMethodRequest"
+          }
+        }
+      },
+      "SshAuthenticationResponse": {
+        "type": "object",
+        "required": [
+          "host_key",
+          "method"
+        ],
+        "properties": {
+          "host_key": {
+            "$ref": "#/components/schemas/PublicKey"
+          },
+          "method": {
+            "$ref": "#/components/schemas/SshAuthMethodResponse"
+          }
+        }
+      },
+      "SshPassword": {
+        "type": "string",
+        "maxLength": 1024,
+        "minLength": 1
+      },
+      "SshRequest": {
+        "type": "object",
+        "required": [
+          "user",
+          "port",
+          "authentication",
+          "connect_timeout_seconds"
+        ],
+        "properties": {
+          "user": {
+            "$ref": "#/components/schemas/SshUser"
+          },
+          "port": {
+            "$ref": "#/components/schemas/Port"
+          },
+          "authentication": {
+            "$ref": "#/components/schemas/SshAuthenticationRequest"
+          },
+          "connect_timeout_seconds": {
+            "$ref": "#/components/schemas/ConnectTimeout"
+          }
+        }
+      },
+      "SshResponse": {
+        "type": "object",
+        "required": [
+          "user",
+          "port",
+          "authentication",
+          "connect_timeout_seconds"
+        ],
+        "properties": {
+          "user": {
+            "$ref": "#/components/schemas/SshUser"
+          },
+          "port": {
+            "$ref": "#/components/schemas/Port"
+          },
+          "authentication": {
+            "$ref": "#/components/schemas/SshAuthenticationResponse"
+          },
+          "connect_timeout_seconds": {
+            "$ref": "#/components/schemas/ConnectTimeout"
+          }
+        }
+      },
+      "SshUser": {
+        "type": "string",
+        "maxLength": 64,
+        "minLength": 1
+      },
+      "StartedSignInResponse": {
+        "type": "object",
+        "required": [
+          "accepted"
+        ],
+        "properties": {
+          "accepted": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AcceptedCredentialResponse"
+            }
+          }
+        }
+      },
+      "TerminalClientMessage": {
+        "oneOf": [
+          {
+            "type": "object",
+            "required": [
+              "cols",
+              "rows",
+              "type"
+            ],
+            "properties": {
+              "cols": {
+                "$ref": "#/components/schemas/TerminalDimension"
+              },
+              "rows": {
+                "$ref": "#/components/schemas/TerminalDimension"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "resize"
+                ]
+              }
+            }
+          },
+          {
+            "type": "object",
+            "required": [
+              "bytes",
+              "type"
+            ],
+            "properties": {
+              "bytes": {
+                "type": "integer",
+                "format": "int64"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "ack"
+                ]
+              }
+            }
+          }
+        ]
+      },
+      "TerminalDimension": {
+        "type": "integer",
+        "maximum": 65535,
+        "minimum": 1
+      },
+      "TerminalServerMessage": {
+        "oneOf": [
+          {
+            "type": "object",
+            "required": [
+              "type"
+            ],
+            "properties": {
+              "type": {
+                "type": "string",
+                "enum": [
+                  "opened"
+                ]
+              }
+            }
+          },
+          {
+            "type": "object",
+            "required": [
+              "status",
+              "type"
+            ],
+            "properties": {
+              "status": {
+                "type": "integer",
+                "format": "u-int32",
+                "minimum": 0
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "exit_status"
+                ]
+              }
+            }
+          },
+          {
+            "type": "object",
+            "required": [
+              "signal",
+              "type"
+            ],
+            "properties": {
+              "signal": {
+                "type": "string"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "exit_signal"
+                ]
+              }
+            }
+          },
+          {
+            "type": "object",
+            "required": [
+              "error",
+              "type"
+            ],
+            "properties": {
+              "error": {
+                "$ref": "#/components/schemas/ApiError"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "error"
+                ]
+              }
+            }
+          }
+        ]
+      },
+      "TotpCode": {
+        "type": "string",
+        "pattern": "^\\d{6}$",
+        "x-pattern-message": "Six digits."
+      },
+      "TotpCredentialResponse": {
+        "type": "object",
+        "required": [
+          "created_at",
+          "last_used_at"
+        ],
+        "properties": {
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "last_used_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "UnknownAuditEvent": {
+        "oneOf": [
+          {
+            "type": "object",
+            "required": [
+              "payload",
+              "type"
+            ],
+            "properties": {
+              "payload": {
+                "type": "object",
+                "required": [
+                  "entry_type",
+                  "payload"
+                ],
+                "properties": {
+                  "entry_type": {
+                    "type": "string"
+                  },
+                  "payload": {
+                    "type": "string"
+                  }
+                }
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "unknown"
+                ]
+              }
+            }
+          }
+        ]
+      },
+      "UpdateCredentialsRequest": {
+        "oneOf": [
+          {
+            "type": "object",
+            "required": [
+              "new_password",
+              "action"
+            ],
+            "properties": {
+              "new_password": {
+                "$ref": "#/components/schemas/Password"
+              },
+              "action": {
+                "type": "string",
+                "enum": [
+                  "set_password"
+                ]
+              }
+            }
+          },
+          {
+            "type": "object",
+            "required": [
+              "action"
+            ],
+            "properties": {
+              "action": {
+                "type": "string",
+                "enum": [
+                  "remove_password"
+                ]
+              }
+            }
+          },
+          {
+            "type": "object",
+            "required": [
+              "action"
+            ],
+            "properties": {
+              "action": {
+                "type": "string",
+                "enum": [
+                  "start_totp_registration"
+                ]
+              }
+            }
+          },
+          {
+            "type": "object",
+            "required": [
+              "code",
+              "action"
+            ],
+            "properties": {
+              "code": {
+                "$ref": "#/components/schemas/TotpCode"
+              },
+              "action": {
+                "type": "string",
+                "enum": [
+                  "finish_totp_registration"
+                ]
+              }
+            }
+          },
+          {
+            "type": "object",
+            "required": [
+              "action"
+            ],
+            "properties": {
+              "action": {
+                "type": "string",
+                "enum": [
+                  "remove_totp"
+                ]
+              }
+            }
+          },
+          {
+            "type": "object",
+            "required": [
+              "action"
+            ],
+            "properties": {
+              "action": {
+                "type": "string",
+                "enum": [
+                  "start_passkey_registration"
+                ]
+              }
+            }
+          },
+          {
+            "type": "object",
+            "required": [
+              "response",
+              "action"
+            ],
+            "properties": {
+              "response": {
+                "$ref": "#/components/schemas/PasskeyRegistrationJson"
+              },
+              "action": {
+                "type": "string",
+                "enum": [
+                  "finish_passkey_registration"
+                ]
+              }
+            }
+          },
+          {
+            "type": "object",
+            "required": [
+              "id",
+              "name",
+              "action"
+            ],
+            "properties": {
+              "id": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "name": {
+                "$ref": "#/components/schemas/PasskeyName"
+              },
+              "action": {
+                "type": "string",
+                "enum": [
+                  "rename_passkey"
+                ]
+              }
+            }
+          },
+          {
+            "type": "object",
+            "required": [
+              "id",
+              "action"
+            ],
+            "properties": {
+              "id": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "action": {
+                "type": "string",
+                "enum": [
+                  "remove_passkey"
+                ]
+              }
+            }
+          },
+          {
+            "type": "object",
+            "required": [
+              "action"
+            ],
+            "properties": {
+              "action": {
+                "type": "string",
+                "enum": [
+                  "generate_recovery_codes"
+                ]
+              }
+            }
+          }
+        ]
+      },
+      "UpdateCredentialsResponse": {
+        "type": "object",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "$ref": "#/components/schemas/CredentialUpdateResultResponse"
+          },
+          "recovery_codes": {
+            "type": [
+              "array",
+              "null"
+            ],
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "UserResponse": {
+        "type": "object",
+        "required": [
+          "id",
+          "username",
+          "display_name",
+          "status",
+          "roles",
+          "permissions",
+          "created_at"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "username": {
+            "$ref": "#/components/schemas/Username"
+          },
+          "display_name": {
+            "$ref": "#/components/schemas/DisplayName"
+          },
+          "status": {
+            "$ref": "#/components/schemas/UserStatus"
+          },
+          "roles": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Role"
+            }
+          },
+          "permissions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Permission"
+            }
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "UserStatus": {
+        "type": "string",
+        "enum": [
+          "active",
+          "suspended"
+        ]
+      },
+      "Username": {
+        "type": "string",
+        "description": "Letters, digits, and single '.', '-' or '_' between them. Stored in lower case.",
+        "maxLength": 32,
+        "minLength": 3,
+        "pattern": "^[A-Za-z0-9]([A-Za-z0-9]|[._-][A-Za-z0-9])*$",
+        "x-pattern-message": "Letters, digits, and single '.', '-' or '_' between them. Stored in lower case."
+      }
+    },
+    "responses": {
+      "ApiError": {
+        "description": "",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ApiError"
+            }
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "recovery_token": {
+        "type": "http",
+        "scheme": "bearer"
+      },
+      "session": {
+        "type": "apiKey",
+        "in": "cookie",
+        "name": "__Host-Http-paron_session"
+      }
+    }
+  }
+}

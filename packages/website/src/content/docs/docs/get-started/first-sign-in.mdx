@@ -1,0 +1,69 @@
+---
+title: First sign-in
+description: Open the web UI, trust the certificate, and change the administrator password.
+sidebar:
+  order: 3
+---
+
+import Screenshot from "../../../../components/Screenshot.astro";
+import loginDark from "../../../../assets/screenshots/login-dark.webp";
+import loginLight from "../../../../assets/screenshots/login-light.webp";
+import overviewDark from "../../../../assets/screenshots/overview-dark.webp";
+import overviewLight from "../../../../assets/screenshots/overview-light.webp";
+
+## Open the web UI
+
+Open a URL from `--public-url` in a browser. On the host of Paron, you can also open
+`https://localhost:<listen port>`.
+
+## Certificate warning
+
+If Paron has a certificate from Let's Encrypt, the browser shows no warning.
+
+If not, Paron generates its own certificate, and the browser shows a
+warning. You have two options:
+
+- Accept the warning in the browser.
+- Trust the certificate authority of Paron. Download it from `https://<name>/paron-ca.crt` and add
+  it to the trusted authorities of your system or your browser.
+
+:::caution
+Before you trust the certificate, compare its SHA-256 fingerprint with the line in the server log. An
+attacker in the network can give you a different certificate.
+
+```text
+certificate issued under self signed CA SHA256:<fingerprint>
+```
+
+:::
+
+See [Certificates](/docs/server/certificates/).
+
+## Sign in
+
+Sign in with the user name `paron` and the password from the installation.
+
+<Screenshot
+  light={loginLight}
+  dark={loginDark}
+  alt="The sign-in page of Paron, with the fields Username and Password, the button Sign in, and the button Sign in with a passkey."
+/>
+
+## Set up Paron
+
+After you sign in, the page **Overview** shows a short list of steps to set up Paron. Paron marks
+each step as done when it sees the result. To hide the list, select **Skip setup**.
+
+<Screenshot
+  light={overviewLight}
+  dark={overviewDark}
+  alt="The page Overview of Paron, with the list Set up Paron: Secure your account, Add a machine, Open a terminal, and Add a teammate."
+/>
+
+Do the first step before the others, because the password of `paron` is in the installation output:
+
+1. Open the user menu at the bottom of the sidebar, and select **My account**.
+2. In the card **Sign-in methods**, select **Change password** next to **Password**, and type the new
+   password.
+3. Set up an authenticator app or add a passkey. See
+   [Sign-in methods](/docs/server/users-and-roles/#sign-in-methods).

@@ -1,0 +1,36 @@
+---
+import { Icon } from "@astrojs/starlight/components";
+---
+
+<theme-toggle>
+  <button
+    type="button"
+    class="-m-2 flex cursor-pointer bg-transparent p-2 text-[1.2rem] text-(--sl-color-gray-2) hover:text-(--sl-color-white)"
+    aria-label="Switch between the light and the dark theme"
+  >
+    <Icon name="sun" class="inline-block dark:hidden" />
+    <Icon name="moon" class="hidden dark:inline-block" />
+  </button>
+</theme-toggle>
+
+<script>
+  customElements.define(
+    "theme-toggle",
+    class extends HTMLElement {
+      connectedCallback() {
+        this.querySelector("button")?.addEventListener("click", () => {
+          const theme =
+            document.documentElement.dataset.theme === "light"
+              ? "dark"
+              : "light";
+          document.documentElement.dataset.theme = theme;
+          try {
+            localStorage.setItem("starlight-theme", theme);
+          } catch {
+            // the choice then lasts for this page only
+          }
+        });
+      }
+    },
+  );
+</script>

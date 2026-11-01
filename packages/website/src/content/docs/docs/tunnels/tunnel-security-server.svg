@@ -1,0 +1,129 @@
+<svg xmlns="http://www.w3.org/2000/svg" class="paron-diagram" viewBox="0 0 852 440" role="img" aria-label="A network that sends the tunnel to an attacker, in a common reverse tunnel and in Paron.">
+  <style>
+    /* In a page that defines the --sl-color-* variables, the diagram uses them. Opened alone, it uses the second value. */
+    .paron-diagram {
+      --d-bg: var(--sl-color-bg, #ffffff);
+      --d-text: var(--sl-color-white, #17181c);
+      --d-detail: var(--sl-color-gray-2, #454857);
+      --d-line: var(--sl-color-gray-3, #6b6f85);
+      --d-box: var(--sl-color-gray-6, #f0f1f5);
+      --d-box-line: var(--sl-color-gray-4, #a3a7b8);
+      --d-server: var(--sl-color-accent-low, #c7d2fe);
+      --d-server-line: var(--sl-color-accent, #4f46e5);
+      --d-tunnel: var(--sl-color-orange, #d97706);
+      --d-tunnel-text: var(--sl-color-orange-high, #92400e);
+      --d-refused: var(--sl-color-red, #dc2626);
+      font-family: var(--sl-font, system-ui, sans-serif);
+    }
+    @media (prefers-color-scheme: dark) {
+      .paron-diagram {
+        --d-bg: var(--sl-color-bg, #17181c);
+        --d-text: var(--sl-color-white, #ffffff);
+        --d-detail: var(--sl-color-gray-2, #c0c2d0);
+        --d-line: var(--sl-color-gray-3, #8f93a8);
+        --d-box: var(--sl-color-gray-6, #24262e);
+        --d-box-line: var(--sl-color-gray-4, #545868);
+        --d-server: var(--sl-color-accent-low, #1e2a78);
+        --d-server-line: var(--sl-color-accent, #6d7cff);
+        --d-tunnel: var(--sl-color-orange, #f5a524);
+        --d-tunnel-text: var(--sl-color-orange-high, #fcd58a);
+        --d-refused: var(--sl-color-red, #f87171);
+      }
+    }
+    .paron-diagram .bg { fill: var(--d-bg); }
+    .paron-diagram text { text-anchor: middle; fill: var(--d-detail); font-size: 13px; }
+    .paron-diagram .name { fill: var(--d-text); font-size: 15px; font-weight: 600; }
+    .paron-diagram .box { fill: var(--d-box); stroke: var(--d-box-line); }
+    .paron-diagram .server { fill: var(--d-server); stroke: var(--d-server-line); stroke-width: 1.5; }
+    .paron-diagram .zone { fill: none; stroke: var(--d-box-line); stroke-dasharray: 4 4; }
+    .paron-diagram .line { fill: none; stroke: var(--d-line); stroke-width: 1.5; }
+    .paron-diagram .arrow { fill: var(--d-line); }
+    .paron-diagram .line.tunnel { stroke: var(--d-tunnel); stroke-dasharray: 6 4; }
+    .paron-diagram .arrow.tunnel { fill: var(--d-tunnel); }
+    .paron-diagram .label.tunnel { fill: var(--d-tunnel-text); }
+      .paron-diagram .start { text-anchor: start; }
+    .paron-diagram .chip { fill: var(--d-bg); stroke: var(--d-tunnel); stroke-width: 1.5; }
+    .paron-diagram .chip-name { fill: var(--d-text); font-weight: 600; }
+    .paron-diagram .line.refused { stroke: var(--d-refused); stroke-dasharray: 2 4; }
+    .paron-diagram .cross { fill: none; stroke: var(--d-refused); stroke-width: 2; }
+    .paron-diagram .line.bad { stroke: var(--d-refused); }
+    .paron-diagram .arrow.bad { fill: var(--d-refused); }
+    .paron-diagram .label.bad { fill: var(--d-refused); }
+    .paron-diagram .item { fill: var(--d-bg); stroke: var(--d-box-line); }
+    .paron-diagram .item.hit { stroke: var(--d-refused); stroke-width: 1.5; }
+    .paron-diagram .line.idle { stroke: var(--d-box-line); stroke-dasharray: 6 4; }
+    .paron-diagram .mono { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12px; fill: var(--d-text); }
+    .paron-diagram .box.hit { stroke: var(--d-refused); stroke-width: 1.5; }
+    .paron-diagram .name.bad { fill: var(--d-refused); }
+  </style>
+  <defs>
+    <marker id="paron-sec-server" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path class="arrow" d="M0 0 10 5 0 10z"/>
+    </marker>
+    <marker id="paron-sec-server-tunnel" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path class="arrow tunnel" d="M0 0 10 5 0 10z"/>
+    </marker>
+    <marker id="paron-sec-server-bad" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path class="arrow bad" d="M0 0 10 5 0 10z"/>
+    </marker>
+  </defs>
+
+  <rect class="bg" width="852" height="440"/>
+
+  <text class="name start" x="20" y="30">A common reverse tunnel</text>
+
+  <rect class="box" x="660" y="26" width="172" height="46" rx="10"/>
+  <text class="name" x="746" y="54">Server</text>
+  <path class="line idle" d="M455 90V49H660"/>
+
+  <rect class="box" x="20" y="80" width="170" height="80" rx="10"/>
+  <text class="name" x="105" y="116">Machine</text>
+  <text x="105" y="136">trusts each server</text>
+  <rect class="item hit" x="370" y="90" width="170" height="60" rx="8"/>
+  <text class="chip-name" x="455" y="116">Compromised network</text>
+  <text class="label bad" x="455" y="135">sends it to the attacker</text>
+
+  <rect class="box hit" x="660" y="94" width="172" height="52" rx="10"/>
+  <text class="name bad" x="746" y="125">Attacker</text>
+
+  <path class="line" d="M190 110H368" marker-end="url(#paron-sec-server)"/>
+  <text class="mono" x="279" y="100">server.example.com</text>
+  <path class="line bad" d="M540 110H658" marker-end="url(#paron-sec-server-bad)"/>
+  <path class="line bad" d="M660 130H542" marker-end="url(#paron-sec-server-bad)"/>
+  <text class="label bad" x="600" y="149">shows its key</text>
+  <path class="line bad" d="M370 130H192" marker-end="url(#paron-sec-server-bad)"/>
+  <text class="label bad" x="279" y="149">accepted</text>
+
+  <text class="label bad start" x="20" y="186">The machine accepts each key. Its tunnel now goes to the attacker.</text>
+
+  <path class="phase" d="M20 212H832"/>
+
+  <text class="name start" x="20" y="246">Paron</text>
+
+  <rect class="box server" x="660" y="230" width="172" height="46" rx="10"/>
+  <g fill="none" transform="translate(678 241) scale(0.25) translate(-2 -16)"><rect x="2" y="16" width="96" height="96" rx="22" fill="oklch(0.17 0.012 35)"/><g transform="translate(50 64) scale(0.88) translate(-50 -64)"><path transform="translate(50 100) scale(0.84 0.8) translate(-50 -100)" d="M3 100 L3.4 88.5 Q4 81.6 10.5 80 L37 72.6 L63 72.6 L89.5 80 Q96 81.6 96.6 88.5 L97 100 Z" fill="oklch(0.94 0.01 80)"></path><g transform="translate(0 7) translate(50 76) scale(0.88) translate(-50 -76)"><path d="M27 35 L27 53 C25.5 68 36 76 50 76 C64 76 74.5 68 73 53 L73 35 Z" fill="oklch(0.94 0.01 80)" stroke="oklch(0.17 0.01 45)" stroke-width="4" stroke-linejoin="round"></path><path d="M32.4 42.2 L47.8 45 L47 49.4 L32.8 46.4 Z" fill="oklch(0.17 0.01 45)"></path><path d="M67.6 42.2 L52.2 45 L53 49.4 L67.2 46.4 Z" fill="oklch(0.17 0.01 45)"></path><path d="M36 51.6 L45 51.6 M64 51.6 L55 51.6" stroke="oklch(0.17 0.01 45)" stroke-width="3.4" stroke-linecap="round"></path><path d="M43 65.6 Q50 64 57 65.8" stroke="oklch(0.17 0.01 45)" stroke-width="3.6" stroke-linecap="round"></path><g transform="translate(0 3.5)"><path d="M26 30 L30 14 C36 9.5 44 9 50 11 C56 9 64 9.5 70 14 L74 30 Z" fill="oklch(0.94 0.01 80)"></path><path d="M12 30 C20.5 42.5 79.5 42.5 88 30 C77.5 34.8 22.5 34.8 12 30 Z" fill="oklch(0.94 0.01 80)" stroke="oklch(0.17 0.01 45)" stroke-width="2.6" stroke-linejoin="round"></path></g></g></g></g>
+  <text class="name start" x="712" y="258">Paron server</text>
+  <path class="line idle" d="M455 300V253H660"/>
+
+  <rect class="box" x="20" y="280" width="170" height="100" rx="10"/>
+  <text class="name" x="105" y="306">Machine</text>
+  <rect class="chip" x="32" y="324" width="146" height="38" rx="8"/>
+  <text class="chip-name" x="105" y="348">Server fingerprint</text>
+  <rect class="item hit" x="370" y="300" width="170" height="60" rx="8"/>
+  <text class="chip-name" x="455" y="326">Compromised network</text>
+  <text class="label bad" x="455" y="345">sends it to the attacker</text>
+
+  <rect class="box hit" x="660" y="304" width="172" height="52" rx="10"/>
+  <text class="name bad" x="746" y="335">Attacker</text>
+
+  <path class="line" d="M190 320H368" marker-end="url(#paron-sec-server)"/>
+  <text class="mono" x="279" y="310">paron.example.com</text>
+  <path class="line bad" d="M540 320H658" marker-end="url(#paron-sec-server-bad)"/>
+  <path class="line bad" d="M660 340H542" marker-end="url(#paron-sec-server-bad)"/>
+  <text class="label bad" x="600" y="359">shows its key</text>
+  <path class="line refused" d="M370 340H224"/>
+  <path class="cross" d="M200 333l14 14m0-14l-14 14"/>
+  <text x="294" y="359">wrong key</text>
+
+  <text class="start" x="20" y="408">The key is not the one from the token. The machine closes the connection and sends nothing.</text>
+</svg>

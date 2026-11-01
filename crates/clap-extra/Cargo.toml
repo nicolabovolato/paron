@@ -1,0 +1,13 @@
+[package]
+name = "clap-extra"
+edition.workspace = true
+license = "MIT"
+publish = false
+repository.workspace = true
+description = "What clap does not derive: an argument's names, and a parsed value read back"
+
+[lints]
+workspace = true
+
+[dependencies]
+clap-extra-macros = { workspace = true }

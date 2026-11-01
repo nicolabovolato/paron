@@ -1,0 +1,17 @@
+{
+  "extends": ["//"],
+  "tasks": {
+    "build": {
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        "$TURBO_ROOT$/crates/paron-cli/examples/**",
+        "$TURBO_ROOT$/crates/paron-cli/CHANGELOG.md",
+        "$TURBO_ROOT$/crates/paron-cli/install.sh",
+        "$TURBO_ROOT$/crates/paron-cli/install.ps1",
+        "$TURBO_ROOT$/packages/paron-ui/src/assets/banner.svg",
+        "$TURBO_ROOT$/packages/paron-ui/src/assets/paron.svg",
+        "$TURBO_ROOT$/packages/paron-ui/src/assets/cowsay.txt"
+      ]
+    }
+  }
+}

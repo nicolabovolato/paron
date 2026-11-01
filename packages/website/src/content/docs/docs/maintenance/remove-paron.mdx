@@ -1,0 +1,158 @@
+---
+title: Remove Paron
+description: Remove a tunnel from a machine, and remove the server.
+sidebar:
+  order: 4
+---
+
+import { TabItem, Tabs } from "@astrojs/starlight/components";
+
+## Remove a tunnel
+
+1. In the web UI, delete the machine, or [revoke its tunnel access](/docs/tunnels/manage-a-tunnel/#revoke-tunnel-access).
+2. On the machine, stop and remove the daemon, then delete the data directory.
+
+<Tabs syncKey="daemon-manager">
+  <TabItem label="systemd">
+
+    ```sh
+    sudo systemctl disable --now paron-tunnel
+    sudo rm /etc/systemd/system/paron-tunnel.service
+    sudo systemctl daemon-reload
+    sudo rm -r /var/lib/paron-tunnel
+    ```
+
+  </TabItem>
+  <TabItem label="launchd (macOS)">
+
+    ```sh
+    sudo launchctl bootout system/dev.bovolato.paron.tunnel
+    sudo rm /Library/LaunchDaemons/dev.bovolato.paron.tunnel.plist
+    sudo rm -r /Library/paron-tunnel
+    ```
+
+  </TabItem>
+  <TabItem label="Windows service">
+
+    In PowerShell as administrator:
+
+    ```powershell
+    Stop-Service paron-tunnel
+    sc.exe delete paron-tunnel
+    Remove-EventLog -Source paron-tunnel
+    Remove-Item -Recurse C:\ProgramData\paron-tunnel
+    ```
+
+  </TabItem>
+  <TabItem label="Docker">
+
+    ```sh
+    docker compose -f docker-compose.tunnel.yml down --volumes
+    ```
+
+  </TabItem>
+</Tabs>
+
+3. Remove the [system account and the program](#system-account-and-program).
+
+## Remove the server
+
+When you remove the server, the tunnels cannot connect. Remove them first.
+
+If you think that you will need the data again, [back it up](/docs/maintenance/back-up-and-restore/#back-up)
+first.
+
+<Tabs syncKey="daemon-manager">
+  <TabItem label="systemd">
+
+    ```sh
+    sudo systemctl disable --now paron-server
+    sudo rm /etc/systemd/system/paron-server.service
+    sudo systemctl daemon-reload
+    sudo rm -r /var/lib/paron
+    ```
+
+  </TabItem>
+  <TabItem label="launchd (macOS)">
+
+    ```sh
+    sudo launchctl bootout system/dev.bovolato.paron.server
+    sudo rm /Library/LaunchDaemons/dev.bovolato.paron.server.plist
+    sudo rm -r /Library/paron
+    ```
+
+  </TabItem>
+  <TabItem label="Windows service">
+
+    In PowerShell as administrator:
+
+    ```powershell
+    Stop-Service paron-server
+    sc.exe delete paron-server
+    Remove-EventLog -Source paron-server
+    Remove-Item -Recurse C:\ProgramData\paron
+    ```
+
+  </TabItem>
+  <TabItem label="Docker">
+
+    ```sh
+    docker compose -f docker-compose.server.yml down --volumes
+    ```
+
+  </TabItem>
+</Tabs>
+
+Then remove the [system account and the program](#system-account-and-program).
+
+If you trusted the certificate authority of Paron, remove "Paron Root CA" from the trusted
+authorities of your system or your browser. See [Certificates](/docs/server/certificates/).
+
+## System account and program
+
+The server and the tunnel use the same system account. Delete it only when no Paron daemon on the
+host uses it.
+
+<Tabs syncKey="daemon-manager">
+  <TabItem label="systemd">
+
+    ```sh
+    sudo userdel paron
+    sudo rm /usr/local/bin/paron
+    ```
+
+    On a system with no `userdel`, use `deluser paron`.
+
+  </TabItem>
+  <TabItem label="launchd (macOS)">
+
+    ```sh
+    sudo dscl . -delete /Users/_paron
+    sudo dscl . -delete /Groups/_paron
+    sudo rm /usr/local/bin/paron
+    ```
+
+  </TabItem>
+  <TabItem label="Windows service">
+
+    Windows deletes the virtual account when you delete the service. Remove the program, and
+    remove its directory from the system `PATH`:
+
+    ```powershell
+    Remove-Item -Recurse 'C:\Program Files\Paron'
+    $path = [Environment]::GetEnvironmentVariable('Path', 'Machine') -split ';' -ne 'C:\Program Files\Paron'
+    [Environment]::SetEnvironmentVariable('Path', $path -join ';', 'Machine')
+    ```
+
+  </TabItem>
+  <TabItem label="Docker">
+
+    ```sh
+    docker image rm ghcr.io/nicolabovolato/paron
+    ```
+
+  </TabItem>
+</Tabs>
+
+If you installed the program into a different directory with `PARON_INSTALL_DIR`, delete it from
+that directory.

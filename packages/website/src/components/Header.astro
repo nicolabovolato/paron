@@ -1,0 +1,57 @@
+---
+import Search from "@astrojs/starlight/components/Search.astro";
+import SocialIcons from "@astrojs/starlight/components/SocialIcons.astro";
+import ThemeSelect from "./ThemeSelect.astro";
+
+const changelog = "/docs/changelog/";
+const path = Astro.url.pathname;
+const links = [
+  {
+    label: "Docs",
+    href: "/docs/",
+    current: path.startsWith("/docs/") && path !== changelog,
+  },
+  { label: "Changelog", href: changelog, current: path === changelog },
+];
+---
+
+<div class="flex h-full items-center gap-(--sl-nav-gap)">
+  <div class="sl-flex -m-1 min-w-0 overflow-clip p-1">
+    <a
+      class="flex min-w-0 items-center gap-2.5 text-(length:--sl-text-lg) font-extrabold tracking-tight whitespace-nowrap text-(--sl-color-white) uppercase no-underline"
+      href="/"
+    >
+      <img
+        class="h-7 w-auto"
+        src="/favicon.svg"
+        alt=""
+        width="28"
+        height="28"
+      />
+      <span translate="no">Paron</span>
+    </a>
+  </div>
+  <nav
+    class="hidden items-center gap-5 ps-2 min-[50rem]:flex print:hidden"
+    aria-label="Site"
+  >
+    {links.map((link) => (
+      <a
+        class="text-(length:--sl-text-sm) font-semibold whitespace-nowrap text-(--sl-color-gray-2) no-underline hover:text-(--sl-color-white) aria-[current=page]:text-(--sl-color-white)"
+        href={link.href}
+        aria-current={link.current ? "page" : undefined}
+      >
+        {link.label}
+      </a>
+    ))}
+  </nav>
+  <div class="sl-flex flex-1 justify-end print:hidden">
+    <Search />
+  </div>
+  <div class="sl-hidden md:sl-flex items-center gap-4 print:hidden">
+    <div class="sl-flex items-center gap-4 before:h-8 before:border-s before:border-(--sl-color-gray-5) before:content-[''] [&_a]:text-(--sl-color-gray-2) [&_a:hover]:text-(--sl-color-white)">
+      <SocialIcons />
+    </div>
+    <ThemeSelect />
+  </div>
+</div>

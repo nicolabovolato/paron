@@ -1,0 +1,133 @@
+<svg xmlns="http://www.w3.org/2000/svg" class="paron-diagram" viewBox="0 0 852 634" role="img" aria-label="The sign-in limit with no proxy, with a proxy that is not trusted, and with a trusted proxy.">
+  <style>
+    /* In a page that defines the --sl-color-* variables, the diagram uses them. Opened alone, it uses the second value. */
+    .paron-diagram {
+      --d-bg: var(--sl-color-bg, #ffffff);
+      --d-text: var(--sl-color-white, #17181c);
+      --d-detail: var(--sl-color-gray-2, #454857);
+      --d-line: var(--sl-color-gray-3, #6b6f85);
+      --d-box: var(--sl-color-gray-6, #f0f1f5);
+      --d-box-line: var(--sl-color-gray-4, #a3a7b8);
+      --d-server: var(--sl-color-accent-low, #c7d2fe);
+      --d-server-line: var(--sl-color-accent, #4f46e5);
+      --d-tunnel: var(--sl-color-orange, #d97706);
+      --d-tunnel-text: var(--sl-color-orange-high, #92400e);
+      --d-refused: var(--sl-color-red, #dc2626);
+      font-family: var(--sl-font, system-ui, sans-serif);
+    }
+    @media (prefers-color-scheme: dark) {
+      .paron-diagram {
+        --d-bg: var(--sl-color-bg, #17181c);
+        --d-text: var(--sl-color-white, #ffffff);
+        --d-detail: var(--sl-color-gray-2, #c0c2d0);
+        --d-line: var(--sl-color-gray-3, #8f93a8);
+        --d-box: var(--sl-color-gray-6, #24262e);
+        --d-box-line: var(--sl-color-gray-4, #545868);
+        --d-server: var(--sl-color-accent-low, #1e2a78);
+        --d-server-line: var(--sl-color-accent, #6d7cff);
+        --d-tunnel: var(--sl-color-orange, #f5a524);
+        --d-tunnel-text: var(--sl-color-orange-high, #fcd58a);
+        --d-refused: var(--sl-color-red, #f87171);
+      }
+    }
+    .paron-diagram .bg { fill: var(--d-bg); }
+    .paron-diagram text { text-anchor: middle; fill: var(--d-detail); font-size: 13px; }
+    .paron-diagram .name { fill: var(--d-text); font-size: 15px; font-weight: 600; }
+    .paron-diagram .box { fill: var(--d-box); stroke: var(--d-box-line); }
+    .paron-diagram .server { fill: var(--d-server); stroke: var(--d-server-line); stroke-width: 1.5; }
+    .paron-diagram .zone { fill: none; stroke: var(--d-box-line); stroke-dasharray: 4 4; }
+    .paron-diagram .line { fill: none; stroke: var(--d-line); stroke-width: 1.5; }
+    .paron-diagram .arrow { fill: var(--d-line); }
+    .paron-diagram .line.tunnel { stroke: var(--d-tunnel); stroke-dasharray: 6 4; }
+    .paron-diagram .arrow.tunnel { fill: var(--d-tunnel); }
+    .paron-diagram .label.tunnel { fill: var(--d-tunnel-text); }
+      .paron-diagram .start { text-anchor: start; }
+    .paron-diagram .chip { fill: var(--d-bg); stroke: var(--d-tunnel); stroke-width: 1.5; }
+    .paron-diagram .chip-name { fill: var(--d-text); font-weight: 600; }
+    .paron-diagram .line.refused { stroke: var(--d-refused); stroke-dasharray: 2 4; }
+    .paron-diagram .cross { fill: none; stroke: var(--d-refused); stroke-width: 2; }
+    .paron-diagram .line.bad { stroke: var(--d-refused); }
+    .paron-diagram .arrow.bad { fill: var(--d-refused); }
+    .paron-diagram .label.bad { fill: var(--d-refused); }
+    .paron-diagram .item { fill: var(--d-bg); stroke: var(--d-box-line); }
+    .paron-diagram .item.hit { stroke: var(--d-refused); stroke-width: 1.5; }
+    .paron-diagram .line.idle { stroke: var(--d-box-line); stroke-dasharray: 6 4; }
+    .paron-diagram .mono { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12px; fill: var(--d-text); }
+    .paron-diagram .box.hit { stroke: var(--d-refused); stroke-width: 1.5; }
+    .paron-diagram .name.bad { fill: var(--d-refused); }
+    .paron-diagram .hollow { fill: none; stroke: var(--d-box-line); }
+    .paron-diagram .tls { fill: none; stroke: var(--d-server); stroke-width: 16; stroke-linecap: round; }
+    .paron-diagram .good { fill: var(--d-text); }
+  </style>
+  <defs>
+    <marker id="paron-proxy-address" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path class="arrow" d="M0 0 10 5 0 10z"/>
+    </marker>
+    <marker id="paron-proxy-address-tunnel" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path class="arrow tunnel" d="M0 0 10 5 0 10z"/>
+    </marker>
+    <marker id="paron-proxy-address-bad" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path class="arrow bad" d="M0 0 10 5 0 10z"/>
+    </marker>
+  </defs>
+
+  <rect class="bg" width="852" height="634"/>
+  <text class="name start" x="20" y="30">No proxy</text>
+  <rect class="box" x="20" y="52" width="120" height="36" rx="8"/>
+  <text class="chip-name" x="80" y="75">User 1</text>
+  <path class="line" d="M140 70H620" marker-end="url(#paron-proxy-address)"/>
+  <rect class="box" x="20" y="96" width="120" height="36" rx="8"/>
+  <text class="chip-name" x="80" y="119">User 2</text>
+  <path class="line" d="M140 114H620" marker-end="url(#paron-proxy-address)"/>
+  <rect class="box" x="20" y="140" width="120" height="36" rx="8"/>
+  <text class="chip-name" x="80" y="163">User 3</text>
+  <path class="line" d="M140 158H620" marker-end="url(#paron-proxy-address)"/>
+  <rect class="box server" x="622" y="52" width="210" height="124" rx="10"/>
+  <g fill="none" transform="translate(712 70) scale(0.3125) translate(-2 -16)"><rect x="2" y="16" width="96" height="96" rx="22" fill="oklch(0.17 0.012 35)"/><g transform="translate(50 64) scale(0.88) translate(-50 -64)"><path transform="translate(50 100) scale(0.84 0.8) translate(-50 -100)" d="M3 100 L3.4 88.5 Q4 81.6 10.5 80 L37 72.6 L63 72.6 L89.5 80 Q96 81.6 96.6 88.5 L97 100 Z" fill="oklch(0.94 0.01 80)"></path><g transform="translate(0 7) translate(50 76) scale(0.88) translate(-50 -76)"><path d="M27 35 L27 53 C25.5 68 36 76 50 76 C64 76 74.5 68 73 53 L73 35 Z" fill="oklch(0.94 0.01 80)" stroke="oklch(0.17 0.01 45)" stroke-width="4" stroke-linejoin="round"></path><path d="M32.4 42.2 L47.8 45 L47 49.4 L32.8 46.4 Z" fill="oklch(0.17 0.01 45)"></path><path d="M67.6 42.2 L52.2 45 L53 49.4 L67.2 46.4 Z" fill="oklch(0.17 0.01 45)"></path><path d="M36 51.6 L45 51.6 M64 51.6 L55 51.6" stroke="oklch(0.17 0.01 45)" stroke-width="3.4" stroke-linecap="round"></path><path d="M43 65.6 Q50 64 57 65.8" stroke="oklch(0.17 0.01 45)" stroke-width="3.6" stroke-linecap="round"></path><g transform="translate(0 3.5)"><path d="M26 30 L30 14 C36 9.5 44 9 50 11 C56 9 64 9.5 70 14 L74 30 Z" fill="oklch(0.94 0.01 80)"></path><path d="M12 30 C20.5 42.5 79.5 42.5 88 30 C77.5 34.8 22.5 34.8 12 30 Z" fill="oklch(0.94 0.01 80)" stroke="oklch(0.17 0.01 45)" stroke-width="2.6" stroke-linejoin="round"></path></g></g></g></g>
+  <text class="name" x="727" y="123">Paron server</text>
+  <text class="good" x="727" y="144">one limit for each user</text>
+
+
+  <text class="name start" x="20" y="244">Proxy, not trusted</text>
+  <rect class="box" x="20" y="266" width="120" height="36" rx="8"/>
+  <text class="chip-name" x="80" y="289">User 1</text>
+  <path class="line" d="M140 284H308" marker-end="url(#paron-proxy-address)"/>
+  <rect class="box" x="20" y="310" width="120" height="36" rx="8"/>
+  <text class="chip-name" x="80" y="333">User 2</text>
+  <path class="line" d="M140 328H308" marker-end="url(#paron-proxy-address)"/>
+  <rect class="box" x="20" y="354" width="120" height="36" rx="8"/>
+  <text class="chip-name" x="80" y="377">User 3</text>
+  <path class="line" d="M140 372H308" marker-end="url(#paron-proxy-address)"/>
+  <path class="line" d="M450 328H620" marker-end="url(#paron-proxy-address)"/>
+  <text x="535" y="321">Proxy</text>
+  <rect class="box" x="310" y="266" width="140" height="124" rx="10"/>
+  <text class="name" x="380" y="333">Proxy</text>
+  <rect class="box server" x="622" y="266" width="210" height="124" rx="10"/>
+  <g fill="none" transform="translate(712 284) scale(0.3125) translate(-2 -16)"><rect x="2" y="16" width="96" height="96" rx="22" fill="oklch(0.17 0.012 35)"/><g transform="translate(50 64) scale(0.88) translate(-50 -64)"><path transform="translate(50 100) scale(0.84 0.8) translate(-50 -100)" d="M3 100 L3.4 88.5 Q4 81.6 10.5 80 L37 72.6 L63 72.6 L89.5 80 Q96 81.6 96.6 88.5 L97 100 Z" fill="oklch(0.94 0.01 80)"></path><g transform="translate(0 7) translate(50 76) scale(0.88) translate(-50 -76)"><path d="M27 35 L27 53 C25.5 68 36 76 50 76 C64 76 74.5 68 73 53 L73 35 Z" fill="oklch(0.94 0.01 80)" stroke="oklch(0.17 0.01 45)" stroke-width="4" stroke-linejoin="round"></path><path d="M32.4 42.2 L47.8 45 L47 49.4 L32.8 46.4 Z" fill="oklch(0.17 0.01 45)"></path><path d="M67.6 42.2 L52.2 45 L53 49.4 L67.2 46.4 Z" fill="oklch(0.17 0.01 45)"></path><path d="M36 51.6 L45 51.6 M64 51.6 L55 51.6" stroke="oklch(0.17 0.01 45)" stroke-width="3.4" stroke-linecap="round"></path><path d="M43 65.6 Q50 64 57 65.8" stroke="oklch(0.17 0.01 45)" stroke-width="3.6" stroke-linecap="round"></path><g transform="translate(0 3.5)"><path d="M26 30 L30 14 C36 9.5 44 9 50 11 C56 9 64 9.5 70 14 L74 30 Z" fill="oklch(0.94 0.01 80)"></path><path d="M12 30 C20.5 42.5 79.5 42.5 88 30 C77.5 34.8 22.5 34.8 12 30 Z" fill="oklch(0.94 0.01 80)" stroke="oklch(0.17 0.01 45)" stroke-width="2.6" stroke-linejoin="round"></path></g></g></g></g>
+  <text class="name" x="727" y="337">Paron server</text>
+  <text class="label bad" x="727" y="358">one limit for all users</text>
+
+
+  <text class="name start" x="20" y="458">Trusted proxy</text>
+  <rect class="box" x="20" y="480" width="120" height="36" rx="8"/>
+  <text class="chip-name" x="80" y="503">User 1</text>
+  <path class="line" d="M140 498H308" marker-end="url(#paron-proxy-address)"/>
+  <path class="line" d="M450 498H620" marker-end="url(#paron-proxy-address)"/>
+  <text x="535" y="491">User 1</text>
+  <rect class="box" x="20" y="524" width="120" height="36" rx="8"/>
+  <text class="chip-name" x="80" y="547">User 2</text>
+  <path class="line" d="M140 542H308" marker-end="url(#paron-proxy-address)"/>
+  <path class="line" d="M450 542H620" marker-end="url(#paron-proxy-address)"/>
+  <text x="535" y="535">User 2</text>
+  <rect class="box" x="20" y="568" width="120" height="36" rx="8"/>
+  <text class="chip-name" x="80" y="591">User 3</text>
+  <path class="line" d="M140 586H308" marker-end="url(#paron-proxy-address)"/>
+  <path class="line" d="M450 586H620" marker-end="url(#paron-proxy-address)"/>
+  <text x="535" y="579">User 3</text>
+  <rect class="box" x="310" y="480" width="140" height="124" rx="10"/>
+  <text class="name" x="380" y="547">Proxy</text>
+  <rect class="box server" x="622" y="480" width="210" height="124" rx="10"/>
+  <g fill="none" transform="translate(712 498) scale(0.3125) translate(-2 -16)"><rect x="2" y="16" width="96" height="96" rx="22" fill="oklch(0.17 0.012 35)"/><g transform="translate(50 64) scale(0.88) translate(-50 -64)"><path transform="translate(50 100) scale(0.84 0.8) translate(-50 -100)" d="M3 100 L3.4 88.5 Q4 81.6 10.5 80 L37 72.6 L63 72.6 L89.5 80 Q96 81.6 96.6 88.5 L97 100 Z" fill="oklch(0.94 0.01 80)"></path><g transform="translate(0 7) translate(50 76) scale(0.88) translate(-50 -76)"><path d="M27 35 L27 53 C25.5 68 36 76 50 76 C64 76 74.5 68 73 53 L73 35 Z" fill="oklch(0.94 0.01 80)" stroke="oklch(0.17 0.01 45)" stroke-width="4" stroke-linejoin="round"></path><path d="M32.4 42.2 L47.8 45 L47 49.4 L32.8 46.4 Z" fill="oklch(0.17 0.01 45)"></path><path d="M67.6 42.2 L52.2 45 L53 49.4 L67.2 46.4 Z" fill="oklch(0.17 0.01 45)"></path><path d="M36 51.6 L45 51.6 M64 51.6 L55 51.6" stroke="oklch(0.17 0.01 45)" stroke-width="3.4" stroke-linecap="round"></path><path d="M43 65.6 Q50 64 57 65.8" stroke="oklch(0.17 0.01 45)" stroke-width="3.6" stroke-linecap="round"></path><g transform="translate(0 3.5)"><path d="M26 30 L30 14 C36 9.5 44 9 50 11 C56 9 64 9.5 70 14 L74 30 Z" fill="oklch(0.94 0.01 80)"></path><path d="M12 30 C20.5 42.5 79.5 42.5 88 30 C77.5 34.8 22.5 34.8 12 30 Z" fill="oklch(0.94 0.01 80)" stroke="oklch(0.17 0.01 45)" stroke-width="2.6" stroke-linejoin="round"></path></g></g></g></g>
+  <text class="name" x="727" y="551">Paron server</text>
+  <text class="good" x="727" y="572">one limit for each user</text>
+</svg>

@@ -1,0 +1,40 @@
+name: CLA
+
+on:
+  issue_comment:
+    types: [created]
+  pull_request_target:
+    types: [opened, closed, synchronize]
+
+env:
+  DOCUMENT: https://github.com/${{ github.repository }}/blob/master/CLA.md
+  SIGN_COMMENT: I have read the CLA document and I hereby sign the CLA.
+  CHECK_AGAIN_COMMENT: Check the CLA again.
+
+jobs:
+  cla:
+    runs-on: ubuntu-latest
+    permissions:
+      actions: write
+      contents: write
+      pull-requests: write
+      statuses: write
+    steps:
+      - if: >
+          github.event_name == 'pull_request_target' ||
+          github.event.comment.body == env.SIGN_COMMENT ||
+          github.event.comment.body == env.CHECK_AGAIN_COMMENT
+        uses: contributor-assistant/github-action@ca4a40a7d1004f18d9960b404b97e5f30a505a08
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          path-to-document: ${{ env.DOCUMENT }}
+          custom-pr-sign-comment: ${{ env.SIGN_COMMENT }}
+          suggest-recheck: false
+          custom-notsigned-prcomment: >-
+            Thank you for your contribution. Before we can merge it, $you must agree to the
+            [Contributor License Agreement](${{ env.DOCUMENT }}). To agree, write a comment with
+            exactly the text below.<br/>To run this check again, write a comment with the text
+            "${{ env.CHECK_AGAIN_COMMENT }}"<br/>
+          path-to-signatures: signatures/version1/cla.json
+          branch: cla-signatures

@@ -1,0 +1,14 @@
+name: Set up Bun
+description: Installs the Bun version that the workspace names, and restores the package cache.
+
+runs:
+  using: composite
+  steps:
+    - uses: oven-sh/setup-bun@v2
+      with:
+        bun-version-file: package.json
+
+    - uses: actions/cache@v6
+      with:
+        path: ~/.bun/install/cache
+        key: bun-${{ runner.os }}-${{ hashFiles('bun.lock') }}

@@ -1,0 +1,11 @@
+User-agent: *
+Allow: /
+
+User-agent: Googlebot-Image
+User-agent: baiduspider-image
+User-agent: msnbot-media
+User-agent: YandexImages
+Allow: /favicon.svg
+Disallow: /
+
+Sitemap: https://paron.bovolato.dev/sitemap-index.xml

@@ -1,0 +1,64 @@
+---
+title: Set up a tunnel
+description: Register a machine with the server and start its tunnel.
+sidebar:
+  order: 2
+---
+
+import Screenshot from "../../../../components/Screenshot.astro";
+import machinesDark from "../../../../assets/screenshots/machines-pending-dark.webp";
+import machinesLight from "../../../../assets/screenshots/machines-pending-light.webp";
+import setupDark from "../../../../assets/screenshots/tunnel-dialog-dark.webp";
+import setupLight from "../../../../assets/screenshots/tunnel-dialog-light.webp";
+
+You need the role Administrator or Operator.
+
+## Before you start
+
+- In the web UI, add the machine with the connection **Tunneled**.
+- Install the `paron` program on the machine. See
+  [Install with the binary](/docs/get-started/install-with-the-binary/#install-the-program).
+- The machine must be able to reach the server at the address that you use for the web UI.
+
+## Get the command
+
+1. Open **Machines**. In the menu of the machine, select **Set up tunnel**.
+2. Paron shows a command with a token. Copy it.
+
+<Screenshot
+  light={setupLight}
+  dark={setupDark}
+  alt="The dialog Set up the tunnel on backup-offsite, with the command paron tunnel bootstrap and its token, and the button Copy token."
+/>
+
+Paron shows the token only once. The token is valid for 15 minutes and for one use.
+
+## Run the command on the machine
+
+```sh
+paron tunnel bootstrap --token 'paron://…'
+```
+
+At the question about ports, enter the SSH port of the machine. The default SSH port is 22. The
+tunnel refuses a connection to a port that is not in the list. If the SSH port is not in the list,
+Paron cannot open a terminal. See [Ports and sockets](/docs/tunnels/ports-and-sockets/).
+
+The command then registers the machine with the server. If you accepted the daemon definition, the
+tunnel runs as a system daemon and starts with the system.
+
+## The states of a tunnel
+
+The list of machines shows the state.
+
+<Screenshot
+  light={machinesLight}
+  dark={machinesDark}
+  alt="The list of machines: office-nas, warehouse-pos and site-gateway are Registered, and backup-offsite is Setup pending."
+/>
+
+| State             | Meaning                                                              |
+| ----------------- | -------------------------------------------------------------------- |
+| **Not set up**    | No token exists. Select **Set up tunnel**.                           |
+| **Setup pending** | A token exists, and the machine did not use it yet.                  |
+| **Token expired** | The 15 minutes ended. Select **Set up tunnel** again.                |
+| **Registered**    | The machine used the token. Paron can reach it when the tunnel runs. |

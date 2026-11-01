@@ -1,0 +1,217 @@
+---
+title: Paron
+description: Paron is a self-hosted SSH gateway in one binary. It reaches machines directly or through an outbound tunnel, keeps the credentials, and gives each user a terminal in the browser.
+template: splash
+editUrl: false
+head:
+  - tag: title
+    content: Paron
+hero:
+  title: The boss of your machines.
+  tagline: Self-hosted SSH access for your team. No open ports. No VPN. No keys on laptops.
+---
+
+import { Code, TabItem, Tabs } from "@astrojs/starlight/components";
+import {
+  Archive,
+  BadgeCheck,
+  Container,
+  Fingerprint,
+  KeyRound,
+  LifeBuoy,
+  ListFilter,
+  Lock,
+  ShieldCheck,
+  Smartphone,
+  Ticket,
+  Vault,
+} from "@lucide/astro";
+import CapabilityList from "../../components/CapabilityList.astro";
+import ShowcaseRow from "../../components/ShowcaseRow.astro";
+import activityDark from "../../assets/screenshots/activity-dark.webp";
+import activityLight from "../../assets/screenshots/activity-light.webp";
+import terminalDark from "../../assets/screenshots/terminal-dark.webp";
+import terminalLight from "../../assets/screenshots/terminal-light.webp";
+import tunnelDark from "../../assets/screenshots/tunnel-dialog-dark.webp";
+import tunnelLight from "../../assets/screenshots/tunnel-dialog-light.webp";
+import compose from "../../../../../crates/paron-cli/examples/docker-compose.server.yml?raw";
+
+:::caution
+Paron is in early development.
+:::
+
+<ShowcaseRow
+  title="Machines behind NAT call in"
+  light={tunnelLight}
+  dark={tunnelDark}
+  alt="The dialog Set up the tunnel on backup-offsite, with the paron tunnel bootstrap command and its token."
+  link={{
+    href: "/docs/tunnels/how-a-tunnel-works/",
+    label: "How a tunnel works",
+  }}
+>
+  <p>
+    On a machine that Paron cannot reach, run one command with a one-use token.
+    <code>paron tunnel</code> connects out to your server, and it connects again
+    by itself when the network drops. The machine needs no open port, and your
+    firewall stays closed.
+  </p>
+</ShowcaseRow>
+
+<ShowcaseRow
+  title="Access without handing out keys"
+  light={terminalLight}
+  dark={terminalDark}
+  alt="A terminal in the web UI of Paron, connected to the machine web-01, with htop open."
+  link={{ href: "/docs/server/machines/ssh-access/", label: "SSH access" }}
+  reverse
+>
+  <p>
+    Paron stores the password or the private key of each machine, or generates a
+    key for it. People sign in to Paron and open a terminal in the browser, also
+    on a phone. When someone leaves, suspend the user. There is no key to remove
+    from the machines.
+  </p>
+</ShowcaseRow>
+
+<ShowcaseRow
+  title="Every sign-in and terminal on record"
+  light={activityLight}
+  dark={activityDark}
+  alt="The Activity page of Paron, with sign-ins, terminals and machine changes by three users."
+  link={{ href: "/docs/server/activity/", label: "Activity" }}
+>
+  <p>
+    Give each person the role Administrator or Operator. They sign in with a
+    password, an authenticator app or a passkey. Activity lists each sign-in,
+    each terminal and each change, and you can filter it by user or by machine.
+  </p>
+</ShowcaseRow>
+
+## Out of the box
+
+<CapabilityList
+  items={[
+    {
+      icon: Fingerprint,
+      title: "Passkeys and authenticator apps",
+      text: "Sign in with a passkey alone, or add a code from an authenticator app to the password.",
+    },
+    {
+      icon: LifeBuoy,
+      title: "Recovery links",
+      text: "A locked-out user gets a link from an administrator. It works one time, for 24 hours.",
+    },
+    {
+      icon: KeyRound,
+      title: "Generated SSH keys",
+      text: "Paron creates an Ed25519 key pair for a machine and shows only the public key.",
+    },
+    {
+      icon: ShieldCheck,
+      title: "Host key check",
+      text: "Paron connects only to a machine that presents the host key on record.",
+    },
+    {
+      icon: Vault,
+      title: "Encrypted secrets",
+      text: "Paron encrypts each password and private key before it stores them.",
+    },
+    {
+      icon: BadgeCheck,
+      title: "Certificates",
+      text: "Paron gets a certificate from Let's Encrypt, or issues one from its own authority.",
+    },
+    {
+      icon: Ticket,
+      title: "One-use tunnel tokens",
+      text: "A setup token works one time and expires after 15 minutes. Revoke a tunnel at any time.",
+    },
+    {
+      icon: Smartphone,
+      title: "Terminal on a phone",
+      text: "The terminal works on a touch screen, with the keys that a phone keyboard does not have.",
+    },
+    {
+      icon: ListFilter,
+      title: "Activity filters",
+      text: "Find an event by user, by machine, or by date.",
+    },
+    {
+      icon: Lock,
+      title: "Lockdown from the host",
+      text: "If an attacker has an administrator account, one command on the host suspends all users.",
+    },
+    {
+      icon: Container,
+      title: "Binary or Docker",
+      text: "Install one file with a script, or run the Docker image. Run it as a system daemon if you want.",
+    },
+    {
+      icon: Archive,
+      title: "Backup of one directory",
+      text: "All the data of the server is in one directory. Back it up, and you back up Paron.",
+    },
+  ]}
+/>
+
+## One program, one directory
+
+The server, the web UI and the tunnel broker are one program, and the tunnel on a machine is the same
+program. It needs no database server and no second service. At the first start, Paron sets up its
+certificate and the first administrator.
+
+## Scope
+
+Paron connects to machines over SSH. Users open terminals in the web UI. Paron does not record the
+sessions.
+
+## Install
+
+<Tabs>
+  <TabItem label="Linux + macOS">
+
+    Install `paron`, and set up the server:
+
+    ```sh
+    curl -fsSL https://paron.bovolato.dev/install.sh | sh
+    paron server bootstrap
+    ```
+
+    See [Install with the binary](/docs/get-started/install-with-the-binary/).
+
+  </TabItem>
+  <TabItem label="Windows">
+
+    In PowerShell as administrator, install `paron`, and set up the server:
+
+    ```powershell
+    irm https://paron.bovolato.dev/install.ps1 | iex
+    paron server bootstrap
+    ```
+
+    See [Install with the binary](/docs/get-started/install-with-the-binary/).
+
+  </TabItem>
+  <TabItem label="Docker">
+
+    Save this file as `docker-compose.server.yml`, and set the three marked values. The URLs are the ones that your browser and your machines use
+    for Paron, and the first one is in links. If no URL has a public domain, remove the two lines for Let's Encrypt.
+
+    <Code
+      code={compose}
+      lang="yaml"
+      title="docker-compose.server.yml"
+      mark={[/PARON_(?:PUBLIC_URL|LETSENCRYPT|ACME_CONTACT): .*/g]}
+    />
+
+    Start it:
+
+    ```sh
+    docker compose -f docker-compose.server.yml up -d
+    ```
+
+    See [Install with Docker](/docs/get-started/install-with-docker/).
+
+  </TabItem>
+</Tabs>

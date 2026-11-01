@@ -1,0 +1,121 @@
+/* The colours that xterm.js draws with; theme.ts reads them. xterm.js draws on a canvas, so they
+   are values for it and style nothing here. The surface, the text and the cursor are the app's
+   tokens. The ANSI colours are warm, like the neutrals they sit on. A colour with transparency
+   and the search colours must be hex: xterm.js takes them in no other form. */
+.terminal {
+  --terminal-background: var(--card);
+  --terminal-foreground: var(--foreground);
+  --terminal-cursor: var(--primary);
+  --terminal-cursor-accent: var(--card);
+  --terminal-selection-background: #10703a33;
+  --terminal-selection-inactive-background: #62554e26;
+  --terminal-black: #1a110f;
+  --terminal-red: #b3362b;
+  --terminal-green: #19763f;
+  --terminal-yellow: #8a6100;
+  --terminal-blue: #2a5db0;
+  --terminal-magenta: #8b3e9e;
+  --terminal-cyan: #0f7676;
+  --terminal-white: #8c8079;
+  --terminal-bright-black: #62554e;
+  --terminal-bright-red: #d0503f;
+  --terminal-bright-green: #2f8f52;
+  --terminal-bright-yellow: #a57a12;
+  --terminal-bright-blue: #3f74cc;
+  --terminal-bright-magenta: #a454b8;
+  --terminal-bright-cyan: #1f8f8f;
+  --terminal-bright-white: #3b302b;
+
+  --terminal-match: #f3e2b3;
+  --terminal-match-ruler: #a57a12;
+  --terminal-active-match: #bfe3cb;
+  --terminal-active-match-ruler: #10703a;
+}
+
+:global(.dark) .terminal {
+  --terminal-selection-background: #3aa46040;
+  --terminal-selection-inactive-background: #a89c922e;
+  --terminal-black: #2d2422;
+  --terminal-red: #ec7a6c;
+  --terminal-green: #7cc48f;
+  --terminal-yellow: #e2b86a;
+  --terminal-blue: #7fa9ea;
+  --terminal-magenta: #cf9ce3;
+  --terminal-cyan: #6ec8c4;
+  --terminal-white: #d9d1c7;
+  --terminal-bright-black: #8c7f77;
+  --terminal-bright-red: #f5998d;
+  --terminal-bright-green: #9ad8a9;
+  --terminal-bright-yellow: #efcd8a;
+  --terminal-bright-blue: #a0c1f2;
+  --terminal-bright-magenta: #dfb8ee;
+  --terminal-bright-cyan: #92dad6;
+  --terminal-bright-white: #f7f3ee;
+
+  --terminal-match: #5c4a1f;
+  --terminal-match-ruler: #e2b86a;
+  --terminal-active-match: #2f6b45;
+  --terminal-active-match-ruler: #3aa460;
+}
+
+/* The font that xterm.js draws with; use-emulator.ts reads it from the element. */
+.terminal {
+  font-family: var(--font-mono);
+}
+
+/* In a module, `:global` keeps the class names after it as xterm.js writes them.
+
+   The scrollbar in the app's colours. xterm.js colours it from the terminal theme, and these rules,
+   more specific, win over its own. */
+.terminal :global .xterm .xterm-scrollable-element > .scrollbar > .slider {
+  /* The slider of xterm.js is 14px wide. A transparent border leaves 6px to see. It is on all
+     four sides, so that the ends are half circles. */
+  border: 4px solid transparent;
+  border-radius: 9999px;
+  background: color-mix(in oklch, var(--muted-foreground) 30%, transparent);
+  background-clip: padding-box;
+}
+
+.terminal
+  :global
+  .xterm
+  .xterm-scrollable-element
+  > .scrollbar
+  > .slider:hover {
+  background-color: color-mix(
+    in oklch,
+    var(--muted-foreground) 50%,
+    transparent
+  );
+}
+
+.terminal
+  :global
+  .xterm
+  .xterm-scrollable-element
+  > .scrollbar
+  > .slider.active {
+  background-color: color-mix(
+    in oklch,
+    var(--muted-foreground) 65%,
+    transparent
+  );
+}
+
+/* A long press belongs to the terminal (selection and its menu), not to the system's own callout. */
+.terminal :global .xterm-screen {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+/* iOS scrolls the page to keep a focused field above its keyboard. xterm.js keeps its hidden
+   textarea at the cursor, usually at the bottom, so the page would scroll up and back down when the
+   keyboard opens. At the top of the terminal it is always in view. The cost: an input method's
+   candidate box for Chinese, Japanese or Korean shows at the top, not at the cursor. */
+@media (pointer: coarse) {
+  .terminal :global .xterm .xterm-helper-textarea {
+    top: 0 !important;
+    left: 0 !important;
+  }
+}

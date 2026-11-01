@@ -1,0 +1,1 @@
+{"version":3,"file":"app-A1b2C3d4.js","sources":["../src/app.ts"],"sourcesContent":["export const greet = () => \"hello\";\n"],"mappings":"AAAA"}

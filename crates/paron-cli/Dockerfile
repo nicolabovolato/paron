@@ -1,0 +1,25 @@
+FROM scratch
+
+LABEL org.opencontainers.image.licenses="LicenseRef-PolyForm-Shield-1.0.0"
+
+ARG FOLDER
+ARG TARGETARCH
+
+COPY ${FOLDER:?}/${TARGETARCH}/paron /usr/local/bin/paron
+
+ENV PARON_NO_PROMPT=true
+ENV PARON_DATA=/data
+ENV PARON_TUNNEL_DATA=$PARON_DATA
+ENV PARON_LISTEN=0.0.0.0:8443
+
+USER 65532:65532
+
+WORKDIR /tmp
+WORKDIR $PARON_DATA
+WORKDIR /
+
+VOLUME $PARON_DATA
+EXPOSE 8443/tcp
+EXPOSE 8443/udp
+
+ENTRYPOINT ["paron"]

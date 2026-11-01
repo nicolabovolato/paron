@@ -1,0 +1,13 @@
+{
+  "gitSiteUrl": "https://github.com/nicolabovolato/paron/",
+  "packages": {
+    "paron-cli": {
+      "path": "./crates/paron-cli",
+      "manager": "rust",
+      "version": true,
+      "postversion": "cargo update --workspace",
+      "getPublishedVersion": "git tag --list ${ pkg.pkg }-v${ pkgFile.version } --format=${ pkgFile.version }",
+      "publish": []
+    }
+  }
+}

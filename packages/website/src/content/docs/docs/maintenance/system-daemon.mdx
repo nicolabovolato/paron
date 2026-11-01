@@ -1,0 +1,83 @@
+---
+title: System daemon
+description: Check, restart and change the system daemon of the server or of a tunnel, and the accounts it runs as.
+sidebar:
+  order: 1
+---
+
+import { TabItem, Tabs } from "@astrojs/starlight/components";
+
+`paron server bootstrap` and `paron tunnel bootstrap` can install a system daemon that starts with
+the system. Paron installs it with systemd, launchd or the Windows service control manager. With a
+different init system, start `paron server run` or `paron tunnel run` with that init system.
+
+## Names
+
+|            | Linux                                | macOS                                 | Windows                                         |
+| ---------- | ------------------------------------ | ------------------------------------- | ----------------------------------------------- |
+| Server     | `paron-server`                       | `dev.bovolato.paron.server`           | `paron-server`                                  |
+| Tunnel     | `paron-tunnel`                       | `dev.bovolato.paron.tunnel`           | `paron-tunnel`                                  |
+| Definition | `/etc/systemd/system/<name>.service` | `/Library/LaunchDaemons/<name>.plist` | `HKLM\SYSTEM\CurrentControlSet\Services\<name>` |
+| Account    | `paron`                              | `_paron`                              | `NT SERVICE\<name>`                             |
+
+In the commands on this page, replace `<name>` with the name of the daemon.
+
+## Check, read the log, restart
+
+<Tabs syncKey="daemon-manager">
+  <TabItem label="systemd">
+
+    ```sh
+    systemctl status <name>        # state of the daemon
+    journalctl -u <name>           # log
+    sudo systemctl restart <name>  # restart
+    ```
+
+  </TabItem>
+  <TabItem label="launchd (macOS)">
+
+    ```sh
+    sudo launchctl print system/<name>                           # state of the daemon
+    log show --info --debug --predicate 'subsystem == "<name>"'  # log
+    sudo launchctl kickstart -k system/<name>                    # restart
+    ```
+
+  </TabItem>
+  <TabItem label="Windows service">
+
+    ```powershell
+    Get-Service <name>                               # state of the daemon
+    Get-WinEvent -ProviderName <name> -MaxEvents 50  # log
+    Restart-Service <name>                           # restart
+    ```
+
+  </TabItem>
+</Tabs>
+
+## Change a setting
+
+The daemon definition holds the settings as environment variables. Edit the definition, then do
+the step for your daemon manager. With systemd and launchd, a restart alone keeps the old
+definition.
+
+- systemd: run `sudo systemctl daemon-reload`, then restart the daemon.
+- launchd: run `sudo launchctl bootout system/<name>`, then
+  `sudo launchctl bootstrap system /Library/LaunchDaemons/<name>.plist`.
+- Windows: edit the `Environment` value of the registry key, then restart the service.
+
+## Accounts
+
+On Linux and macOS, the daemon runs as a system account with no login shell and no home directory.
+Paron creates the account if it does not exist, and makes it the owner of the data directory. The
+server and the tunnels on one host use the same account.
+
+On Windows, the daemon runs as a virtual account. Windows creates this account with the service,
+and deletes it with the service. The virtual account, the user that ran the bootstrap, the
+administrators and the system can open the data directory. Run the `paron` commands in PowerShell
+as administrator.
+
+With no system daemon, the data directory belongs to the user that ran the bootstrap. Paron logs a
+warning when it runs as root, or on Windows as an administrator.
+
+When root runs a command on a data directory that belongs to a different account, Paron tries to
+run the command as the owner of the directory. If this fails, the command stops with an error.

@@ -1,0 +1,118 @@
+---
+title: Upgrade
+description: Upgrade the server and the tunnels to a new version of Paron.
+sidebar:
+  order: 3
+---
+
+import { TabItem, Tabs } from "@astrojs/starlight/components";
+
+## Before you upgrade
+
+1. Read the [changelog](/docs/changelog/).
+2. [Back up](/docs/maintenance/back-up-and-restore/#back-up) the data directory of the server.
+
+At its first start, the new version changes the data directory. After that, an older version does
+not start with it, and shows `this directory needs a newer Paron version`. To go back to the older
+version, install it again and
+[restore the backup](/docs/maintenance/back-up-and-restore/#restore-when-the-data-directory-still-exists).
+
+Upgrade the server first, then the tunnels.
+
+## Upgrade the server
+
+When the server stops, the open terminals close. The tunnels connect again after the server starts.
+
+<Tabs syncKey="daemon-manager">
+  <TabItem label="systemd">
+
+    Run the [installer](/docs/get-started/install-with-the-binary/#install-the-program) again, then
+    restart the server.
+
+    ```sh
+    curl -fsSL https://paron.bovolato.dev/install.sh | sh
+    sudo systemctl restart paron-server
+    ```
+
+  </TabItem>
+  <TabItem label="launchd (macOS)">
+
+    Run the [installer](/docs/get-started/install-with-the-binary/#install-the-program) again, then
+    restart the server.
+
+    ```sh
+    curl -fsSL https://paron.bovolato.dev/install.sh | sh
+    sudo launchctl kickstart -k system/dev.bovolato.paron.server
+    ```
+
+  </TabItem>
+  <TabItem label="Windows service">
+
+    Windows cannot replace a program while it runs. In PowerShell as administrator, stop the
+    server, run the [installer](/docs/get-started/install-with-the-binary/#install-the-program)
+    again, then start the server.
+
+    ```powershell
+    Stop-Service paron-server
+    irm https://paron.bovolato.dev/install.ps1 | iex
+    Start-Service paron-server
+    ```
+
+  </TabItem>
+  <TabItem label="Docker">
+
+    ```sh
+    docker compose -f docker-compose.server.yml pull
+    docker compose -f docker-compose.server.yml up -d
+    ```
+
+    `paron-server-init` finds the data and stops with no change.
+
+    The tag `latest` is the newest release. To select a version, use its number as the tag, for
+    example `ghcr.io/nicolabovolato/paron:0.1.0`.
+
+  </TabItem>
+</Tabs>
+
+## Upgrade a tunnel
+
+On each tunneled machine, do the same steps with the tunnel. The open terminals on the machine
+close, and the tunnel connects again.
+
+<Tabs syncKey="daemon-manager">
+  <TabItem label="systemd">
+
+    ```sh
+    curl -fsSL https://paron.bovolato.dev/install.sh | sh
+    sudo systemctl restart paron-tunnel
+    ```
+
+  </TabItem>
+  <TabItem label="launchd (macOS)">
+
+    ```sh
+    curl -fsSL https://paron.bovolato.dev/install.sh | sh
+    sudo launchctl kickstart -k system/dev.bovolato.paron.tunnel
+    ```
+
+  </TabItem>
+  <TabItem label="Windows service">
+
+    ```powershell
+    Stop-Service paron-tunnel
+    irm https://paron.bovolato.dev/install.ps1 | iex
+    Start-Service paron-tunnel
+    ```
+
+  </TabItem>
+  <TabItem label="Docker">
+
+    ```sh
+    docker compose -f docker-compose.tunnel.yml pull
+    docker compose -f docker-compose.tunnel.yml up -d
+    ```
+
+  </TabItem>
+</Tabs>
+
+`paron --version` shows the installed version.

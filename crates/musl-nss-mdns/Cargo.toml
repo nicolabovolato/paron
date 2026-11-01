@@ -1,0 +1,12 @@
+[package]
+name = "musl-nss-mdns"
+edition.workspace = true
+license = "MIT"
+publish = false
+repository.workspace = true
+description = "What libnss-mdns does for glibc, for a static musl binary: getaddrinfo asks Avahi for a .local name"
+
+# No `[lints] workspace = true`: the workspace forbids unsafe code, and a C symbol needs it.
+
+[target.'cfg(target_env = "musl")'.dependencies]
+libc = { workspace = true }

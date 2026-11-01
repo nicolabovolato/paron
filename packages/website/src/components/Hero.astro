@@ -1,0 +1,204 @@
+---
+import { Image } from "astro:assets";
+
+import banner from "../../../paron-ui/src/assets/banner.svg";
+import mascot from "../../../paron-ui/src/assets/paron.svg";
+import machinesDark from "../assets/screenshots/machines-dark.webp";
+import machinesLight from "../assets/screenshots/machines-light.webp";
+import cowsay from "../../../paron-ui/src/assets/cowsay.txt?raw";
+import Screenshot from "./Screenshot.astro";
+
+const { title, tagline } = Astro.locals.starlightRoute.entry.data.hero ?? {};
+
+const sayings = cowsay.split("\n").filter(Boolean);
+---
+
+<section class="hero not-content" aria-labelledby="_top">
+  <div class="tile">
+    <div class="copy">
+      <Image class="banner" src={banner} alt="" loading="eager" />
+      <p class="saying" lang="vec" data-sayings={JSON.stringify(sayings)}>
+        <span class="face" aria-hidden="true">
+          [¬_¬]
+        </span>
+        <span class="text">{sayings[0]}</span>
+      </p>
+      <h1 id="_top" data-page-title>
+        {title}
+      </h1>
+      {tagline && <p class="lede" set:html={tagline} />}
+      <p class="actions">
+        <a class="primary" href="#install">
+          Install Paron
+        </a>
+        <a href="/docs/">Read the documentation</a>
+      </p>
+    </div>
+    <Image class="mascot" src={mascot} alt="" width={420} loading="eager" />
+  </div>
+  <div class="product">
+    <Screenshot
+      light={machinesLight}
+      dark={machinesDark}
+      alt="The machine list of Paron: four direct machines and four tunneled machines, with their connection, host and SSH authentication."
+      loading="eager"
+      sizes="(min-width: 72rem) 62rem, 92vw"
+      zoom={false}
+    />
+  </div>
+</section>
+
+<script>
+  const saying = document.querySelector<HTMLElement>(".hero .saying");
+  const sayings: string[] = JSON.parse(saying?.dataset.sayings ?? "[]");
+  const text = saying?.querySelector(".text");
+  if (text && sayings.length)
+    text.textContent = sayings[Math.floor(Math.random() * sayings.length)];
+</script>
+
+<style>
+  .hero {
+    --tile: oklch(0.15 0.012 35);
+    --tile-fg: oklch(0.94 0.012 80);
+    --tile-muted: oklch(0.74 0.02 60);
+    --tile-line: oklch(0.28 0.016 35);
+    --green: oklch(0.64 0.14 152);
+    --green-fg: oklch(0.16 0.02 152);
+    --pad-bottom: clamp(7rem, 12vw, 10rem);
+    --overlap: clamp(4.5rem, 10vw, 6.5rem);
+    display: flex;
+    flex-direction: column;
+    margin-top: 0.5rem;
+  }
+  .tile {
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 2rem;
+    padding: clamp(1.5rem, 4vw, 3.5rem) clamp(1.25rem, 4vw, 3.5rem)
+      var(--pad-bottom);
+    border-radius: 1.75rem;
+    background: var(--tile);
+    color: var(--tile-fg);
+    overflow: hidden;
+  }
+  :global([data-theme="dark"]) .tile {
+    box-shadow: inset 0 0 0 1px var(--tile-line);
+  }
+  .copy {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+  .banner {
+    display: block;
+    width: min(100%, 30rem);
+    height: auto;
+  }
+  .saying {
+    margin: 1.25rem 0 0;
+    font-size: var(--sl-text-base);
+    line-height: 1.5;
+    color: var(--tile-fg);
+  }
+  .saying .face {
+    margin-right: 0.5rem;
+    font-family: var(--sl-font-mono);
+    font-weight: 600;
+    color: rgb(216 102 19);
+  }
+  .saying .text {
+    font-style: italic;
+    font-weight: 700;
+  }
+  h1 {
+    margin: clamp(2rem, 5vw, 3.5rem) 0 0;
+    font-size: clamp(2.25rem, 5vw, 3.75rem);
+    font-weight: 800;
+    line-height: 1.04;
+    letter-spacing: -0.03em;
+    color: var(--tile-fg);
+    text-wrap: balance;
+  }
+  .lede {
+    margin: 1.25rem 0 0;
+    max-width: 52ch;
+    font-size: clamp(1.0625rem, 1.6vw, 1.25rem);
+    line-height: 1.55;
+    color: var(--tile-muted);
+  }
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1rem 1.75rem;
+    margin: 2rem 0 0;
+    font-size: var(--sl-text-base);
+    font-weight: 600;
+  }
+  .actions a {
+    color: var(--tile-fg);
+    text-decoration: underline;
+    text-decoration-color: var(--tile-line);
+    text-underline-offset: 0.3em;
+  }
+  .actions a:hover {
+    text-decoration-color: var(--green);
+  }
+  .actions .primary {
+    padding: 0.75rem 1.25rem;
+    border-radius: 0.625rem;
+    background: var(--green);
+    color: var(--green-fg);
+    font-weight: 700;
+    text-decoration: none;
+    transition: filter 0.15s;
+  }
+  .actions .primary:hover {
+    filter: brightness(1.08);
+  }
+  .actions a:focus-visible {
+    outline: 2px solid var(--green);
+    outline-offset: 3px;
+  }
+  .mascot {
+    display: none;
+  }
+  .product {
+    position: relative;
+    width: min(100%, 62rem);
+    margin: calc(-1 * var(--overlap)) auto 0;
+    padding-inline: clamp(0rem, 2vw, 1.5rem);
+  }
+  .product :global(.screenshot) {
+    margin: 0;
+  }
+  .product :global(.screenshot img) {
+    border-radius: 1rem;
+    box-shadow:
+      0 2px 4px oklch(0.1 0.01 35 / 0.12),
+      0 30px 60px -24px oklch(0.1 0.01 35 / 0.45);
+  }
+
+  @media (min-width: 56rem) {
+    .tile {
+      grid-template-columns: minmax(0, 1fr) 15rem;
+    }
+    /* The headline continues over the mascot column, above the mascot. */
+    h1 {
+      white-space: nowrap;
+    }
+    .mascot {
+      display: block;
+      align-self: end;
+      width: 100%;
+      height: auto;
+      margin-bottom: calc(var(--overlap) - var(--pad-bottom) - 1.5rem);
+    }
+  }
+  @media (min-width: 72rem) {
+    .tile {
+      grid-template-columns: minmax(0, 1fr) 19rem;
+    }
+  }
+</style>

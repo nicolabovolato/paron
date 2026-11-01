@@ -1,0 +1,73 @@
+---
+title: How a tunnel works
+description: How a machine that Paron cannot reach connects to the server.
+sidebar:
+  order: 1
+---
+
+import HowATunnelWorks from "./how-a-tunnel-works.svg";
+import TunnelsFromMachines from "./tunnels-from-machines.svg";
+import TunnelIdentity from "./tunnel-identity.svg";
+import TunnelTransport from "./tunnel-transport.svg";
+
+A tunnel connects a machine to Paron when the server cannot open a connection to the machine, for
+example when the machine is behind NAT or a firewall.
+
+## The connection
+
+The machine runs `paron tunnel`. This program opens one connection to the server and keeps it open.
+The server then uses that connection to reach services on the machine, for example the SSH server.
+
+<div class="not-content">
+  <TunnelsFromMachines />
+</div>
+
+- The machine does not need an open inbound port.
+- The server does not open a port for each machine. All tunnels use the address and port of the
+  web UI.
+
+## Transport
+
+| Transport      | Use                                                                        |
+| -------------- | -------------------------------------------------------------------------- |
+| QUIC, over UDP | The tunnel tries this first.                                               |
+| TLS, over TCP  | The tunnel also tries this when QUIC does not connect in a short interval. |
+
+The tunnel keeps the first connection that it can use, and closes the other.
+
+<div class="not-content">
+  <TunnelTransport />
+</div>
+
+Both transports encrypt the connection. With TCP, one lost packet delays all streams of the
+connection, so QUIC is better when the network allows UDP.
+
+## Identity
+
+The tunnel uses TLS 1.3 with mutual authentication: each side proves that it has its private key.
+No public certificate authority is used. Each side accepts only a key that it already knows. This
+method is known as key pinning.
+
+<div class="not-content">
+  <TunnelIdentity />
+</div>
+
+- **The server.** The server has a root key, in the file `broker-ca.key`, and it signs its own
+  tunnel certificate with that key. The token from **Set up tunnel** holds a fingerprint of the root
+  key. The machine accepts only a certificate that this root key signed. A new certificate from the
+  same root key is accepted, so the server can replace its certificate and the machines stay set up.
+  The tunnel does not use the HTTPS certificate of the web UI for this.
+- **The machine.** `paron tunnel bootstrap` creates a key pair for the machine. In the TLS
+  handshake, the machine proves that it has the private key. Then it sends the secret from the
+  token. The server checks the secret, and only then registers the public key of that connection.
+  After that, the server accepts the machine by this key. The token is not used again.
+
+## Access control
+
+The server can reach only the [ports and sockets](/docs/tunnels/ports-and-sockets/) that you
+allow. The tunnel refuses each other connection. The check is done on the machine, not on the
+server.
+
+<div class="not-content">
+  <HowATunnelWorks />
+</div>

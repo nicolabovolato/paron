@@ -1,0 +1,85 @@
+name: CI
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  rust-lint:
+    strategy:
+      fail-fast: false
+      matrix:
+        runner: [ubuntu-latest, macos-latest, windows-latest]
+    runs-on: ${{ matrix.runner }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - uses: ./.github/actions/setup-bun
+      - uses: ./.github/actions/setup-rust
+
+      - run: cargo fmt --all --check
+      - run: cargo clippy --workspace --all-targets --locked
+      - run: git diff --exit-code -- packages/paron-ui/openapi.json
+
+  rust-test:
+    strategy:
+      fail-fast: false
+      matrix:
+        runner: [ubuntu-latest, macos-latest, windows-latest]
+    runs-on: ${{ matrix.runner }}
+    env:
+      RUSTFLAGS: ${{ matrix.runner != 'ubuntu-latest' && '--cfg disable_testcontainers' || '' }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - uses: ./.github/actions/setup-bun
+      - uses: ./.github/actions/setup-rust
+
+      # The js-frontend-embed tests run each package manager that it supports.
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+      - run: npm install --global pnpm@12
+
+      - uses: taiki-e/install-action@v2
+        with:
+          tool: nextest
+
+      - run: cargo nextest run --workspace --locked
+      - run: cargo test --workspace --doc --locked
+      - run: cargo test --workspace --bench '*' --locked
+
+  typescript:
+    runs-on: ubuntu-latest
+    env:
+      TURBO_TELEMETRY_DISABLED: 1
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - uses: ./.github/actions/setup-bun
+      - uses: actions/cache@v6
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ hashFiles('bun.lock') }}
+
+      - run: bun install --frozen-lockfile
+      - run: bunx playwright install --with-deps chromium webkit
+        working-directory: packages/paron-ui
+      - run: bunx turbo run format build lint test --concurrency=1
+        env:
+          TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+          TURBO_TEAM: ${{ secrets.TURBO_TEAM }}

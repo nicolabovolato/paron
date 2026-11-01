@@ -1,0 +1,66 @@
+---
+import type { Archive } from "@lucide/astro";
+
+interface Props {
+  items: { icon: typeof Archive; title: string; text: string }[];
+}
+
+const { items } = Astro.props;
+---
+
+<ul class="capabilities not-content">
+  {items.map(({ icon: Icon, title, text }) => (
+    <li>
+      <Icon class="icon" size={20} aria-hidden="true" />
+      <h3>{title}</h3>
+      <p>{text}</p>
+    </li>
+  ))}
+</ul>
+
+<style>
+  .capabilities {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 2rem 2.5rem;
+    margin: 2rem 0 0;
+    padding: 0;
+    list-style: none;
+  }
+  li {
+    display: grid;
+    grid-template-columns: 1.25rem minmax(0, 1fr);
+    gap: 0.25rem 0.75rem;
+    align-content: start;
+    align-items: start;
+  }
+  .icon {
+    margin-top: 0.15rem;
+    color: var(--sl-color-accent);
+  }
+  h3 {
+    margin: 0;
+    font-size: var(--sl-text-base);
+    font-weight: 700;
+    line-height: 1.4;
+    color: var(--sl-color-white);
+  }
+  p {
+    grid-column: 2;
+    margin: 0;
+    font-size: var(--sl-text-sm);
+    line-height: 1.55;
+    color: var(--sl-color-gray-2);
+  }
+
+  @media (min-width: 40rem) {
+    .capabilities {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+  @media (min-width: 64rem) {
+    .capabilities {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+</style>

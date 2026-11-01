@@ -1,0 +1,273 @@
+---
+title: Back up and restore
+description: Back up the data directory of the server, and restore it.
+sidebar:
+  order: 2
+---
+
+import { TabItem, Tabs } from "@astrojs/starlight/components";
+
+## What to back up
+
+The server keeps all its data in its [data directory](/docs/server/files/).
+Back up all of the directory.
+
+Do not back up the data directory of a tunnel. See
+[Files](/docs/tunnels/files/). If a machine loses its tunnel data,
+[restore the tunnel access](/docs/tunnels/manage-a-tunnel/#restore-tunnel-access).
+
+### `master.key`
+
+- With no `master.key`, Paron cannot decrypt the passwords and the private keys in the database,
+  and there is no other method to get them.
+- A person with `master.key` and `paron.db` can read the credentials of your machines. See
+  [A copy of the database](/docs/security/#a-copy-of-the-database).
+
+For these reasons, the backup below does not include `master.key`. Copy `master.key` one time to a
+different safe place. The file does not change.
+
+### `broker-ca.key`
+
+`broker-ca.key` is the identity of the server for the tunnels. If it changes, each tunneled machine
+refuses the server, and you must set up each tunnel again. Keep it in the backup.
+
+## Back up
+
+Stop the server before you copy the directory.
+
+<Tabs syncKey="daemon-manager">
+  <TabItem label="systemd">
+
+    ```sh
+    sudo systemctl stop paron-server
+    sudo tar -czf paron-backup.tar.gz --exclude ./master.key -C /var/lib/paron .
+    sudo systemctl start paron-server
+    ```
+
+    Copy `master.key` one time:
+
+    ```sh
+    sudo cp /var/lib/paron/master.key paron-master.key
+    ```
+
+  </TabItem>
+  <TabItem label="launchd (macOS)">
+
+    ```sh
+    sudo launchctl bootout system/dev.bovolato.paron.server
+    sudo tar -czf paron-backup.tar.gz --exclude ./master.key -C /Library/paron .
+    sudo launchctl bootstrap system /Library/LaunchDaemons/dev.bovolato.paron.server.plist
+    ```
+
+    Copy `master.key` one time:
+
+    ```sh
+    sudo cp /Library/paron/master.key paron-master.key
+    ```
+
+  </TabItem>
+  <TabItem label="Docker">
+
+    ```sh
+    docker compose -f docker-compose.server.yml stop paron-server
+    docker run --rm --volumes-from "$(docker compose -f docker-compose.server.yml ps -aq paron-server)" -v "$PWD:/backup" \
+      alpine tar -czf /backup/paron-backup.tar.gz --exclude ./master.key -C /data .
+    docker compose -f docker-compose.server.yml start paron-server
+    ```
+
+    Copy `master.key` one time:
+
+    ```sh
+    docker run --rm --volumes-from "$(docker compose -f docker-compose.server.yml ps -aq paron-server)" -v "$PWD:/backup" \
+      alpine cp /data/master.key /backup/paron-master.key
+    ```
+
+  </TabItem>
+</Tabs>
+
+## The serving index of the tunnels
+
+At each start, the server adds one to the number in `broker-serving-index`. Each tunnel records the
+highest number that it accepted, and it refuses a server with a lower number. A backup has the
+number from the day of the backup, so it is lower than the number that the tunnels recorded.
+
+For this reason, a restore has two procedures:
+
+- If the current data directory still exists, keep its `broker-serving-index`.
+- If the current data directory is lost, add 1000000 to the number in the backup. One start adds
+  one, so 1000000 is more than the starts since the backup.
+
+## Restore when the data directory still exists
+
+For example, after a failed upgrade or a damaged database.
+
+<Tabs syncKey="daemon-manager">
+  <TabItem label="systemd">
+
+    1. Stop the server, and move the current directory to a different name.
+
+       ```sh
+       sudo systemctl stop paron-server
+       sudo mv /var/lib/paron /var/lib/paron.old
+       sudo mkdir /var/lib/paron
+       ```
+
+    2. Extract the backup, then copy `master.key` and `broker-serving-index` from the current
+       directory.
+
+       ```sh
+       sudo tar -xzf paron-backup.tar.gz -C /var/lib/paron
+       sudo cp -p /var/lib/paron.old/master.key /var/lib/paron.old/broker-serving-index /var/lib/paron/
+       ```
+
+    3. Start the server.
+
+       ```sh
+       sudo systemctl start paron-server
+       ```
+
+    4. When the server works, delete `/var/lib/paron.old`.
+
+  </TabItem>
+  <TabItem label="launchd (macOS)">
+
+    1. Stop the server, and move the current directory to a different name.
+
+       ```sh
+       sudo launchctl bootout system/dev.bovolato.paron.server
+       sudo mv /Library/paron /Library/paron.old
+       sudo mkdir /Library/paron
+       ```
+
+    2. Extract the backup, then copy `master.key` and `broker-serving-index` from the current
+       directory.
+
+       ```sh
+       sudo tar -xzf paron-backup.tar.gz -C /Library/paron
+       sudo cp -p /Library/paron.old/master.key /Library/paron.old/broker-serving-index /Library/paron/
+       ```
+
+    3. Start the server.
+
+       ```sh
+       sudo launchctl bootstrap system /Library/LaunchDaemons/dev.bovolato.paron.server.plist
+       ```
+
+    4. When the server works, delete `/Library/paron.old`.
+
+  </TabItem>
+  <TabItem label="Docker">
+
+    1. Stop the server, and make a copy of the current data.
+
+       ```sh
+       docker compose -f docker-compose.server.yml stop paron-server
+       docker run --rm --volumes-from "$(docker compose -f docker-compose.server.yml ps -aq paron-server)" -v "$PWD:/backup" \
+         alpine tar -czf /backup/paron-before-restore.tar.gz -C /data .
+       ```
+
+    2. Replace the data with the backup. The command keeps `master.key` and
+       `broker-serving-index` from the current data.
+
+       ```sh
+       docker run --rm --volumes-from "$(docker compose -f docker-compose.server.yml ps -aq paron-server)" -v "$PWD:/backup" \
+         alpine sh -c 'cp -p /data/master.key /data/broker-serving-index /tmp/ && find /data -mindepth 1 -delete && tar -xzf /backup/paron-backup.tar.gz -C /data && cp -p /tmp/master.key /tmp/broker-serving-index /data/'
+       ```
+
+    3. Start the server.
+
+       ```sh
+       docker compose -f docker-compose.server.yml start paron-server
+       ```
+
+  </TabItem>
+</Tabs>
+
+## Restore when the data directory is lost
+
+For example, after a disk failure. On a new host, first install Paron and run
+`paron server bootstrap` with the same settings as before. Then follow these steps. Put
+`paron-backup.tar.gz` and `paron-master.key` in the current directory.
+
+<Tabs syncKey="daemon-manager">
+  <TabItem label="systemd">
+
+    1. Stop the server, and empty the data directory.
+
+       ```sh
+       sudo systemctl stop paron-server
+       sudo find /var/lib/paron -mindepth 1 -delete
+       ```
+
+    2. Extract the backup, copy `master.key`, and add 1000000 to the serving index.
+
+       ```sh
+       sudo tar -xzf paron-backup.tar.gz -C /var/lib/paron
+       sudo install -m 600 -o paron paron-master.key /var/lib/paron/master.key
+       sudo sh -c 'echo $(( $(cat /var/lib/paron/broker-serving-index) + 1000000 )) > /var/lib/paron/broker-serving-index'
+       ```
+
+    3. Start the server.
+
+       ```sh
+       sudo systemctl start paron-server
+       ```
+
+  </TabItem>
+  <TabItem label="launchd (macOS)">
+
+    1. Stop the server, and empty the data directory.
+
+       ```sh
+       sudo launchctl bootout system/dev.bovolato.paron.server
+       sudo find /Library/paron -mindepth 1 -delete
+       ```
+
+    2. Extract the backup, copy `master.key`, and add 1000000 to the serving index.
+
+       ```sh
+       sudo tar -xzf paron-backup.tar.gz -C /Library/paron
+       sudo install -m 600 -o _paron paron-master.key /Library/paron/master.key
+       sudo sh -c 'echo $(( $(cat /Library/paron/broker-serving-index) + 1000000 )) > /Library/paron/broker-serving-index'
+       ```
+
+    3. Start the server.
+
+       ```sh
+       sudo launchctl bootstrap system /Library/LaunchDaemons/dev.bovolato.paron.server.plist
+       ```
+
+  </TabItem>
+  <TabItem label="Docker">
+
+    1. Stop the server.
+
+       ```sh
+       docker compose -f docker-compose.server.yml stop paron-server
+       ```
+
+    2. Replace the data with the backup, copy `master.key`, and add 1000000 to the serving index.
+
+       ```sh
+       docker run --rm --volumes-from "$(docker compose -f docker-compose.server.yml ps -aq paron-server)" -v "$PWD:/backup" \
+         alpine sh -c 'find /data -mindepth 1 -delete && tar -xzf /backup/paron-backup.tar.gz -C /data && install -m 600 -o 65532 -g 65532 /backup/paron-master.key /data/master.key && echo $(( $(cat /data/broker-serving-index) + 1000000 )) > /data/broker-serving-index'
+       ```
+
+    3. Start the server.
+
+       ```sh
+       docker compose -f docker-compose.server.yml start paron-server
+       ```
+
+  </TabItem>
+</Tabs>
+
+If the server runs as a different account, use that account in `install -o`.
+
+## After a restore
+
+The server has the data from the day of the backup:
+
+- Machines and users that you added after the backup are not there.
+- A tunnel that you set up after the backup cannot connect. Set it up again.
+- A tunnel access that you revoked after the backup is valid again. Revoke it again.

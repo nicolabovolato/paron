@@ -1,0 +1,25 @@
+[package]
+name = "serde-utoipa-validate"
+edition.workspace = true
+license = "MIT"
+publish.workspace = true
+repository.workspace = true
+
+[lints]
+workspace = true
+
+[dependencies]
+serde-utoipa-validate-macros = { workspace = true }
+
+serde = { workspace = true }
+utoipa = { workspace = true }
+
+jiff = { workspace = true, optional = true }
+uuid = { workspace = true, optional = true }
+
+[features]
+jiff = ["dep:jiff"]
+uuid = ["dep:uuid"]
+
+[dev-dependencies]
+serde_json = { workspace = true }

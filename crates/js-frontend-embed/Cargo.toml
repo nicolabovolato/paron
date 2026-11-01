@@ -1,0 +1,50 @@
+[package]
+name = "js-frontend-embed"
+edition.workspace = true
+license = "MIT"
+publish = false
+repository.workspace = true
+description = "Build a JavaScript frontend into a Rust binary, and run its dev server from cargo"
+
+[lints]
+workspace = true
+
+[features]
+build = ["dep:brotli", "dep:ignore", "dep:serde_json"]
+serve = [
+    "dep:axum",
+    "dep:js-frontend-embed-macros",
+    "dep:brotli",
+    "dep:hyper",
+    "dep:hyper-util",
+    "dep:mime_guess",
+    "dep:percent-encoding",
+    "dep:rust-embed",
+    "dep:rustix",
+    "dep:serde_json",
+    "dep:tokio",
+    "dep:tracing",
+]
+
+[dependencies]
+axum = { workspace = true, optional = true }
+js-frontend-embed-macros = { workspace = true, optional = true }
+brotli = { workspace = true, optional = true }
+hyper = { workspace = true, optional = true }
+hyper-util = { workspace = true, optional = true }
+ignore = { workspace = true, optional = true }
+mime_guess = { workspace = true, optional = true }
+percent-encoding = { workspace = true, optional = true }
+thiserror = { workspace = true }
+tokio = { workspace = true, features = ["rt", "io-util"], optional = true }
+rust-embed = { workspace = true, optional = true }
+serde_json = { workspace = true, optional = true }
+tracing = { workspace = true, optional = true }
+
+[target.'cfg(unix)'.dependencies]
+rustix = { workspace = true, optional = true }
+
+[dev-dependencies]
+tower = { workspace = true }
+hyper = { workspace = true, features = ["server", "http1"] }
+tokio = { workspace = true, features = ["macros", "net", "rt", "time"] }

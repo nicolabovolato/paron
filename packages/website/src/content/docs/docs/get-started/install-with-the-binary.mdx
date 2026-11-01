@@ -1,0 +1,140 @@
+---
+title: Install with the binary
+description: Install paron, set up the server, and run it.
+sidebar:
+  order: 1
+---
+
+import { TabItem, Tabs } from "@astrojs/starlight/components";
+
+## Install the program
+
+Run the installer:
+
+<Tabs syncKey="download">
+  <TabItem label="Linux + macOS (curl)">
+
+    ```sh
+    curl -fsSL https://paron.bovolato.dev/install.sh | sh
+    ```
+
+  </TabItem>
+  <TabItem label="Linux + macOS (wget)">
+
+    ```sh
+    wget -qO- https://paron.bovolato.dev/install.sh | sh
+    ```
+
+  </TabItem>
+  <TabItem label="Windows (PowerShell)">
+
+    In PowerShell as administrator:
+
+    ```powershell
+    irm https://paron.bovolato.dev/install.ps1 | iex
+    ```
+
+    Paron needs Windows 10 or Windows Server 2016, or a later version.
+
+  </TabItem>
+</Tabs>
+
+The installer does these steps:
+
+1. It finds the newest release of Paron on GitHub, and the archive for your system.
+2. It downloads the archive, and compares its SHA-256 with the value that GitHub records for the
+   file. If they are different, it stops.
+3. On Linux and macOS, it puts `paron` in `/usr/local/bin`. If that needs root access, it asks
+   through `sudo` or `doas`.
+4. On Windows, it puts `paron.exe` in `C:\Program Files\Paron`, and adds that directory to the
+   system `PATH`.
+
+Two environment variables change what it does:
+
+| Variable            | Meaning                                                                           |
+| ------------------- | --------------------------------------------------------------------------------- |
+| `PARON_VERSION`     | Install this version and not the newest, for example `0.1.0`.                     |
+| `PARON_INSTALL_DIR` | Install into this directory and not `/usr/local/bin` or `C:\Program Files\Paron`. |
+
+:::caution
+The daemon runs Paron from the install directory. Use a directory that only root or the
+administrators can change.
+:::
+
+```sh
+curl -fsSL https://paron.bovolato.dev/install.sh | PARON_VERSION=0.1.0 sh
+```
+
+```powershell
+$env:PARON_VERSION = '0.1.0'; irm https://paron.bovolato.dev/install.ps1 | iex
+```
+
+To upgrade Paron, see [Upgrade](/docs/maintenance/upgrade/).
+
+### Manual download
+
+As an alternative, download the archive for your system from the
+[releases](https://github.com/nicolabovolato/paron/releases).
+
+Unpack the archive and put `paron` on your `PATH`.
+
+```sh
+tar -xzf paron-<version>-<target>.tar.gz
+sudo mv paron /usr/local/bin/
+```
+
+On Windows, the archive is a `.zip` file that contains `paron.exe`.
+
+## Set up the server
+
+```sh
+paron server bootstrap
+```
+
+The command shows a summary of your answers and asks for confirmation. It makes no changes
+before you confirm.
+
+If a step needs root access, Paron asks for it through `sudo` or `doas`. On Windows, Paron cannot
+ask for administrator rights. Run the command in PowerShell as administrator.
+
+At the end, the command prints the user name and the password of the administrator. It prints them
+only once, so record the password.
+
+### Non-interactive setup
+
+When the command does not run in a terminal, or with `--no-prompt`, it asks no questions and uses
+the defaults. Give your
+choices as options or as environment variables. Paron installs the system daemon only if you add
+`--with-system-daemon`. The daemon runs as a system account, see
+[System daemon](/docs/maintenance/system-daemon/).
+
+In this case Paron does not print the password. It writes it to the file `initial-admin-password`
+in the data directory, and it prints the path. The running server deletes that file after 24 hours.
+
+```sh
+paron server bootstrap --no-prompt \
+  --data /var/lib/paron \
+  --listen 0.0.0.0:443 \
+  --public-url https://paron.example.com \
+  --with-system-daemon
+```
+
+## Run the server
+
+If you accepted the daemon definition, the server already runs as a system daemon and starts
+with the system. See [System daemon](/docs/maintenance/system-daemon/).
+
+If you did not, the command prints the line that starts the server:
+
+```sh
+paron server run --data /var/lib/paron --listen 0.0.0.0:443
+```
+
+On Windows, the firewall blocks the listen port. Other hosts can connect only after you open the
+port. In PowerShell as administrator:
+
+```powershell
+New-NetFirewallRule -DisplayName 'Paron server' -Direction Inbound -Protocol TCP -LocalPort 443 -Action Allow
+```
+
+Then [sign in for the first time](/docs/get-started/first-sign-in/).

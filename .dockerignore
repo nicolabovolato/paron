@@ -1,0 +1,11 @@
+target/
+**/node_modules/
+
+.git/
+docs/
+
+**/openapi.json
+**/dist/
+**/.js-frontend-embed
+**/.tanstack/
+**/*.tsbuildinfo

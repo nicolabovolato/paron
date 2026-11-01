@@ -1,0 +1,122 @@
+---
+title: Tunnel security
+description: Six risks of a reverse tunnel, and what Paron does about each one.
+sidebar:
+  label: Security
+  order: 8
+---
+
+import SecurityPorts from "./tunnel-security-ports.svg";
+import SecurityServer from "./tunnel-security-server.svg";
+import SecurityTokens from "./tunnel-security-tokens.svg";
+import SecurityReach from "./tunnel-security-reach.svg";
+import SecurityDirection from "./tunnel-security-direction.svg";
+import SecurityCopy from "./tunnel-security-copy.svg";
+
+A reverse tunnel gives a server a path into a machine that has no open port. This page shows six
+ways in which an attacker can use such a path, and what Paron does about each one.
+
+## Exposed ports
+
+Many reverse tunnels open one port on the server for each machine. The tunnel does not check who
+connects to that port. An attacker who can connect to it reaches the SSH server of the machine.
+
+With `ssh -R`, the port is open only on the server itself by default, so each user and each
+program on the server can use it. With the option `GatewayPorts`, or with a tool that publishes
+the port, the network can use it too.
+
+In Paron, the server opens no port for a machine. Only the server starts a connection through a
+tunnel, and only for a signed-in user who has permission.
+
+<div class="not-content">
+  <SecurityPorts />
+</div>
+
+## Server impersonation
+
+A machine connects to the server by its address. An attacker who controls the DNS or the network
+can send that connection to a different server. If the machine does not check the identity of the
+server, it accepts the false server.
+
+With `ssh -R`, the machine has nothing to check at the first connection, and many scripts turn the
+check off.
+
+In Paron, the token gives the machine the fingerprint of the server before the first connection.
+The machine accepts only a server with that fingerprint. It does not trust DNS or a public
+certificate authority for this. If the fingerprint is different, the machine closes the connection
+and sends nothing. See [Identity](/docs/tunnels/how-a-tunnel-works/#identity).
+
+<div class="not-content">
+  <SecurityServer />
+</div>
+
+## Stolen tokens
+
+In many tunnel tools, a machine signs in with a token from a configuration file. The token works
+until somebody changes it, and often all machines have the same one. An attacker who gets a copy
+can connect as a machine.
+
+In Paron, a token is only for the setup. It is for one machine, it works one time, and it stops
+after 15 minutes. After the setup, each machine signs in with its own key. The private key does
+not leave the machine.
+
+The server stores only a keyed hash of the token and the public key of the machine. A copy of the
+server database does not let an attacker sign in as a machine.
+
+<div class="not-content">
+  <SecurityTokens />
+</div>
+
+## Lateral movement
+
+In many tools, a tunnel can point to each host that the machine can reach. Some tools make the
+machine a proxy into its network. One tunnel is then a path to the database, the file server and
+the other machines.
+
+In Paron, a tunnel reaches only the [ports and sockets](/docs/tunnels/ports-and-sockets/) that you
+allow. They are always on the machine itself. The machine does this check, not the server. No
+setting makes the tunnel connect to a different host.
+
+<div class="not-content">
+  <SecurityReach />
+</div>
+
+## Compromised machines
+
+With `ssh -R`, the machine signs in to the server with an SSH account. If you do not restrict that
+account, an attacker who controls the machine can open a shell on the server. The attacker can
+also forward connections into the network of the server and to the ports of the other machines.
+
+In a mesh VPN, each machine can reach the others unless a rule prevents it.
+
+In Paron, a machine has no account on the server. Only the server opens connections through a
+tunnel. A machine cannot open a connection, and it cannot reach other machines.
+
+<div class="not-content">
+  <SecurityDirection />
+</div>
+
+## Cloned machines
+
+A copy of a machine, for example from a disk image or a backup, has the same key or the same token
+as the original. In most tunnel tools, the copy signs in, and the server cannot tell the two
+apart.
+
+In Paron, each connection has a counter. The counter must be higher than the last one that the
+server accepted. A copy and the original cannot both stay ahead. When the second one connects, its
+counter is old. The server then revokes the tunnel access of the machine, for the copy and for the
+original. You must then
+[restore the tunnel access](/docs/tunnels/manage-a-tunnel/#restore-tunnel-access).
+
+The server does not find a copy if the original does not connect again.
+
+<div class="not-content">
+  <SecurityCopy />
+</div>
+
+## Limitations
+
+- An attacker who controls the server host can reach each allowed port and socket of each machine. Protect
+  the server and its [data directory](/docs/server/files/).
+- An attacker who controls a machine controls what that machine serves through its tunnel.
+- If you allow every port or every socket, the tunnel reaches all services on the machine.

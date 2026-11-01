@@ -1,0 +1,18 @@
+[package]
+name = "windows-platform"
+edition.workspace = true
+license-file.workspace = true
+publish.workspace = true
+repository.workspace = true
+description = "The calls to Windows that need unsafe code: the service control manager, the Event Log and the administrator rights of the process"
+
+[target.'cfg(windows)'.dependencies]
+windows-service = { workspace = true }
+windows-sys = { workspace = true, features = [
+    "Win32_Foundation",
+    "Win32_Security",
+    "Win32_System_EventLog",
+    "Win32_System_Registry",
+    "Win32_System_Services",
+    "Win32_System_Threading",
+] }

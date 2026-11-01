@@ -1,0 +1,30 @@
+---
+title: Files
+description: The data directory of the server and the files in it.
+sidebar:
+  order: 6
+---
+
+`paron server` keeps its files in its data directory. Only the account that runs Paron can read
+them. For the daemon and its account, see [System daemon](/docs/maintenance/system-daemon/).
+
+|                | Linux            | macOS            | Windows                |
+| -------------- | ---------------- | ---------------- | ---------------------- |
+| Data directory | `/var/lib/paron` | `/Library/paron` | `C:\ProgramData\paron` |
+
+| File                          | Content                                                                             |
+| ----------------------------- | ----------------------------------------------------------------------------------- |
+| `paron.db`                    | The database: machines, users and their credentials.                                |
+| `master.key`                  | The key that protects the secrets in the database.                                  |
+| `broker-ca.key`               | The key that identifies the server to tunneled machines.                            |
+| `broker-serving-index`        | A counter for the tunnels.                                                          |
+| `self-signed-ca.pem`          | The certificate authority of Paron. See [Certificates](/docs/server/certificates/). |
+| `self-signed-certificate.pem` | The server certificate from that authority.                                         |
+| `.cache/acme`                 | The certificates from Let's Encrypt or another authority.                           |
+| `initial-admin-password`      | The first password of the administrator. Paron deletes it after 24 hours.           |
+| `version`                     | The version of the directory layout. Do not edit it.                                |
+
+:::caution
+With no `master.key`, Paron cannot decrypt the credentials in the database. See
+[Back up and restore](/docs/maintenance/back-up-and-restore/).
+:::

@@ -1,0 +1,59 @@
+[package]
+name = "paron-tunnel-protocol"
+description = "PTP/1 — a protocol for reaching services on hosts that cannot be dialled"
+edition.workspace = true
+license-file.workspace = true
+publish.workspace = true
+repository.workspace = true
+
+[lints]
+workspace = true
+
+[dependencies]
+async-trait = { workspace = true }
+parking_lot = { workspace = true }
+rand = { workspace = true }
+secrecy = { workspace = true }
+thiserror = { workspace = true }
+tokio = { workspace = true, features = [
+    "sync",
+    "time",
+    "net",
+    "io-util",
+    "rt",
+    "macros",
+] }
+tracing = { workspace = true }
+uuid = { workspace = true }
+quinn = { workspace = true }
+rcgen = { workspace = true }
+rustls = { workspace = true }
+tokio-rustls = { workspace = true }
+tokio-util = { workspace = true }
+x509-parser = { workspace = true }
+sha2 = { workspace = true }
+time = { workspace = true }
+base16ct = { workspace = true }
+yamux = { workspace = true }
+futures-io = { workspace = true }
+futures-util = { workspace = true, features = ["alloc"] }
+
+[dev-dependencies]
+criterion = { workspace = true }
+sysinfo = { workspace = true }
+tokio = { workspace = true, features = [
+    "rt-multi-thread",
+    "macros",
+    "time",
+    "io-util",
+    "net",
+    "test-util",
+] }
+
+[[bench]]
+name = "tunnel"
+harness = false
+
+[[bench]]
+name = "fleet"
+harness = false

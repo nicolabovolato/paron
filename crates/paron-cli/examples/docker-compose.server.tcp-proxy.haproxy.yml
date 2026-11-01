@@ -1,0 +1,78 @@
+services:
+  haproxy:
+    image: haproxy:lts-alpine
+    restart: unless-stopped
+    depends_on:
+      - paron-server
+    configs:
+      - source: haproxy
+        target: /usr/local/etc/haproxy/haproxy.cfg
+    ports:
+      - "443:443/tcp"
+    networks:
+      - paron
+
+  paron-server-init:
+    image: ghcr.io/nicolabovolato/paron:latest
+    command: ["server", "bootstrap"]
+    volumes:
+      - paron-server-data:/data
+    network_mode: none
+
+  paron-server:
+    image: ghcr.io/nicolabovolato/paron:latest
+    command: ["server", "run"]
+    restart: unless-stopped
+    stop_grace_period: 30s
+    depends_on:
+      paron-server-init:
+        condition: service_completed_successfully
+    read_only: true
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    tmpfs:
+      - /tmp
+    volumes:
+      - paron-server-data:/data
+    # The proxy carries only TCP, so a tunnel uses TLS over TCP. To give tunnels QUIC, publish the
+    # UDP port from Paron itself:
+    # ports:
+    #   - "443:8443/udp"
+    networks:
+      - paron
+    environment:
+      PARON_PUBLIC_URL: https://paron.example.com
+      PARON_LETSENCRYPT: production
+      PARON_ACME_CONTACT: admin@example.com
+      # The network of the proxy. Paron reads the PROXY protocol header only from these addresses.
+      PARON_TRUSTED_PROXIES: 172.30.0.0/24
+
+networks:
+  paron:
+    ipam:
+      config:
+        - subnet: 172.30.0.0/24
+
+volumes:
+  paron-server-data:
+
+configs:
+  haproxy:
+    content: |
+      defaults
+        mode tcp
+        # HAProxy needs these three. Paron sends a keep-alive on each terminal and each tunnel
+        # every 30 seconds, so 2 minutes with no data means that the connection is dead.
+        timeout connect 5s
+        timeout client 2m
+        timeout server 2m
+
+      frontend https
+        bind :443
+        default_backend paron
+
+      backend paron
+        # send-proxy-v2 adds the PROXY protocol header.
+        server paron paron-server:8443 send-proxy-v2

@@ -1,0 +1,18 @@
+[package]
+name = "js-frontend-embed-macros"
+edition.workspace = true
+license = "MIT"
+publish = false
+repository.workspace = true
+description = "Attribute macro for js-frontend-embed"
+
+[lib]
+proc-macro = true
+
+[lints]
+workspace = true
+
+[dependencies]
+proc-macro2 = { workspace = true }
+quote = { workspace = true }
+syn = { workspace = true }

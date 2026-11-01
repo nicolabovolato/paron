@@ -1,0 +1,76 @@
+[package]
+name = "paron-core"
+edition.workspace = true
+license-file.workspace = true
+publish.workspace = true
+repository.workspace = true
+
+[lints]
+workspace = true
+
+[dependencies]
+serde-utoipa-validate = { workspace = true, features = ["jiff", "uuid"] }
+paron-tunnel-protocol = { workspace = true }
+
+anyhow = { workspace = true }
+http-serde = { workspace = true }
+mime = { workspace = true }
+argon2 = { workspace = true }
+password-hash = { workspace = true }
+async-stream = { workspace = true }
+async-trait = { workspace = true }
+axum = { workspace = true }
+axum-extra = { workspace = true }
+base64 = { workspace = true }
+base16ct = { workspace = true }
+chacha20poly1305 = { workspace = true }
+ciborium = { workspace = true }
+cookie = { workspace = true }
+derive_more = { workspace = true }
+futures-core = { workspace = true }
+futures-util = { workspace = true, features = ["alloc", "sink"] }
+hmac = { workspace = true }
+indoc = { workspace = true }
+jiff = { workspace = true }
+parking_lot = { workspace = true }
+percent-encoding = { workspace = true }
+psl = { workspace = true }
+rand = { workspace = true }
+ring = { workspace = true }
+russh = { workspace = true }
+secrecy = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+serde_qs = { workspace = true }
+serde_with = { workspace = true }
+sha2 = { workspace = true }
+sqlx = { workspace = true }
+ssh-key = { workspace = true }
+strum = { workspace = true }
+subtle = { workspace = true }
+thiserror = { workspace = true }
+tokio = { workspace = true }
+tokio-util = { workspace = true }
+totp-rs = { workspace = true }
+tracing = { workspace = true }
+tungstenite = { workspace = true }
+url = { workspace = true }
+uuid = { workspace = true }
+webauthn-rs-proto = { workspace = true }
+zeroize = { workspace = true }
+utoipa = { workspace = true }
+utoipa-axum = { workspace = true }
+utoipa-scalar = { workspace = true }
+
+[dev-dependencies]
+regex = { workspace = true }
+tokio-tungstenite = { workspace = true }
+http-body-util = { workspace = true }
+mockall = { workspace = true }
+coset = { workspace = true }
+passkey = { workspace = true }
+passkey-types = { workspace = true }
+rand = { workspace = true }
+testcontainers = { workspace = true }
+tokio = { workspace = true, features = ["test-util"] }
+tower = { workspace = true }

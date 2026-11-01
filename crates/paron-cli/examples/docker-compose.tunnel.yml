@@ -1,0 +1,35 @@
+services:
+  paron-tunnel-init:
+    image: ghcr.io/nicolabovolato/paron:latest
+    command: ["tunnel", "bootstrap"]
+    volumes:
+      - paron-tunnel-data:/data
+    environment:
+      PARON_TUNNEL_TOKEN: paron://paron.example.com:443/00000000-0000-7000-8000-000000000000?fingerprint=sha256:0000000000000000000000000000000000000000000000000000000000000000&secret=0000000000000000
+
+  paron-tunnel:
+    image: ghcr.io/nicolabovolato/paron:latest
+    command: ["tunnel", "run"]
+    restart: unless-stopped
+    stop_grace_period: 20s
+    depends_on:
+      paron-tunnel-init:
+        condition: service_completed_successfully
+    network_mode: host
+    read_only: true
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    tmpfs:
+      - /tmp
+    volumes:
+      - paron-tunnel-data:/data
+    environment:
+      PARON_TUNNEL_PORTS: "22,5432"
+      # PARON_TUNNEL_ALL_PORTS: "true"
+      # PARON_TUNNEL_SOCKETS: /run/postgresql/.s.PGSQL.5432
+      # PARON_TUNNEL_ALL_SOCKETS: "true"
+
+volumes:
+  paron-tunnel-data:

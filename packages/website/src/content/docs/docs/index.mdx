@@ -1,0 +1,56 @@
+---
+title: What is Paron?
+description: What Paron is, how it reaches your machines, and its components.
+sidebar:
+  order: 1
+---
+
+import HowParonWorks from "./how-paron-works.svg";
+import Screenshot from "../../../components/Screenshot.astro";
+import machinesDark from "../../../assets/screenshots/machines-dark.webp";
+import machinesLight from "../../../assets/screenshots/machines-light.webp";
+
+Paron is a self-hosted SSH gateway in one binary. You add a machine, and you open a terminal on it
+from the browser. Paron keeps the credentials, and it controls who has access.
+
+<Screenshot
+  light={machinesLight}
+  dark={machinesDark}
+  alt="The list of machines in the web UI: four direct machines with their host, and four tunneled machines with the state of their tunnel."
+/>
+
+"Paron" is Venetian for "boss".
+
+:::caution
+Paron is in early development.
+:::
+
+## How it works
+
+You run one Paron server and open its web UI in a browser. The server connects to each machine over
+SSH.
+
+<div class="not-content">
+  <HowParonWorks />
+</div>
+
+How the server reaches a machine depends on where the machine is.
+
+| Where the machine is                                              | Connection   | Requirement                                               |
+| ----------------------------------------------------------------- | ------------ | --------------------------------------------------------- |
+| On an address that the server can reach, for example in the cloud | **Direct**   | The server can reach the SSH port of the machine.         |
+| Behind NAT or a firewall                                          | **Tunneled** | The machine can reach the server. It runs `paron tunnel`. |
+| In a private network that you reach through a VPN today           | **Tunneled** | The machine can reach the server. It runs `paron tunnel`. |
+
+With a tunnel, the machine opens the connection to the server. The machine needs no open inbound
+port, and you need no VPN to reach it. See [How a tunnel works](/docs/tunnels/how-a-tunnel-works/).
+
+## Components
+
+Paron is a single program, `paron`, with two commands:
+
+- `paron server` is the control plane. It serves the web UI, stores the machines and the users, and
+  connects to the machines.
+- `paron tunnel` runs on a machine that the server cannot reach. It connects out to the server.
+
+The server stores its data in one directory. It needs no database server and no other service.

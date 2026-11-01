@@ -1,0 +1,38 @@
+services:
+  paron-server-init:
+    image: ghcr.io/nicolabovolato/paron:latest
+    command: ["server", "bootstrap"]
+    volumes:
+      - paron-server-data:/data
+
+  paron-server:
+    image: ghcr.io/nicolabovolato/paron:latest
+    command: ["server", "run"]
+    restart: unless-stopped
+    stop_grace_period: 30s
+    depends_on:
+      paron-server-init:
+        condition: service_completed_successfully
+    read_only: true
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    tmpfs:
+      - /tmp
+    volumes:
+      - paron-server-data:/data
+    ports:
+      - "443:8443/tcp"
+      - "443:8443/udp"
+    environment:
+      PARON_PUBLIC_URL: https://paron.example.com,https://paron.local
+      PARON_LETSENCRYPT: production
+      PARON_ACME_CONTACT: admin@example.com
+      # PARON_ACME_DIRECTORY: https://acme.zerossl.com/v2/DV90
+      # PARON_TRUSTED_PROXIES: 10.0.0.7,192.168.0.0/24
+      # PARON_TRUSTED_L7_PROXIES: 10.0.0.7,192.168.0.0/24
+      # PARON_MAX_CONNECTING_AGENTS: 128
+
+volumes:
+  paron-server-data:

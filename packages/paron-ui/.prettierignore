@@ -1,0 +1,6 @@
+src/components/shadcn/
+i18n.inlang/*
+!i18n.inlang/settings.json
+openapi.json
+dist/
+.vitest/

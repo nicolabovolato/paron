@@ -1,0 +1,27 @@
+---
+title: Files
+description: The data directory of a tunnel and the files in it.
+sidebar:
+  order: 6
+---
+
+`paron tunnel` keeps its files in its data directory. For the daemon and its account, see
+[System daemon](/docs/maintenance/system-daemon/).
+
+|                | Linux                   | macOS                   | Windows                       |
+| -------------- | ----------------------- | ----------------------- | ----------------------------- |
+| Data directory | `/var/lib/paron-tunnel` | `/Library/paron-tunnel` | `C:\ProgramData\paron-tunnel` |
+
+| File                   | Content                                                                                                               |
+| ---------------------- | --------------------------------------------------------------------------------------------------------------------- |
+| `agent.key`            | The key that identifies the machine to the server.                                                                    |
+| `server-endpoint`      | The address and the fingerprint of the server.                                                                        |
+| `agent-sequence`       | A counter that lets the server find a copy of this directory.                                                         |
+| `broker-serving-index` | The highest certificate index of the server that the tunnel accepted. The tunnel refuses a server with a lower index. |
+| `version`              | The version of the directory layout. Do not edit it.                                                                  |
+
+:::caution
+Do not copy the directory of a tunnel to a second machine, and do not restore an old copy of it.
+The server finds that the counters are old, and it revokes the tunnel access of the machine. You
+must then [restore the tunnel access](/docs/tunnels/manage-a-tunnel/#restore-tunnel-access).
+:::

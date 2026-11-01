@@ -1,0 +1,56 @@
+---
+title: Ports and sockets
+description: The ports and UNIX sockets that the server can reach through a tunnel.
+sidebar:
+  order: 4
+---
+
+import AllowedTargets from "./how-a-tunnel-works.svg";
+
+Through a tunnel, the server can reach only the ports and the UNIX sockets that you allow. The
+tunnel refuses each other connection.
+
+<div class="not-content">
+  <AllowedTargets />
+</div>
+
+The tunnel program on the machine does this check, not the server. A change on the server cannot
+give it more access to the machine.
+
+## Rules
+
+- A port or a socket is always on the machine itself. The tunnel does not connect to other hosts in
+  the network of the machine.
+- A port is allowed for TCP and for UDP.
+- If you allow nothing, the tunnel refuses every connection.
+- Paron uses SSH to reach a machine. Allow the SSH port, which is 22 by default. If it is not in the
+  list, Paron cannot test the connection or open a terminal.
+
+## Allow ports and sockets
+
+`paron tunnel bootstrap` asks for the ports and the sockets. You can also give them as options or
+as environment variables.
+
+| Option                       | Variable                   | Allows                                             |
+| ---------------------------- | -------------------------- | -------------------------------------------------- |
+| `--ports 22,5432`            | `PARON_TUNNEL_PORTS`       | the listed ports                                   |
+| `--all-ports`                | `PARON_TUNNEL_ALL_PORTS`   | every port                                         |
+| `--sockets /run/docker.sock` | `PARON_TUNNEL_SOCKETS`     | the listed UNIX sockets                            |
+| `--all-sockets`              | `PARON_TUNNEL_ALL_SOCKETS` | every UNIX socket that the tunnel account can open |
+
+Separate the items of a list with commas. You cannot use a list and its "all" option together.
+
+On Windows, a tunnel serves only ports. The socket options do not exist there, and Paron ignores
+`PARON_TUNNEL_SOCKETS` and `PARON_TUNNEL_ALL_SOCKETS`.
+
+With a system daemon, the account of the tunnel joins the group of each socket in the list. Paron
+does not remove the account from a group: when you remove a socket from the list, remove the
+account from its group yourself.
+
+## Change the list
+
+The tunnel reads the list when it starts.
+
+- **System daemon.** The daemon definition holds the list as environment variables. See
+  [Change a setting](/docs/maintenance/system-daemon/#change-a-setting).
+- **Docker.** Change the variables in the compose file, and run `docker compose up -d` again.

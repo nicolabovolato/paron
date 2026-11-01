@@ -1,0 +1,17 @@
+# Editor / OS
+.DS_Store
+.idea/
+.vscode/
+
+# Rust
+/target
+**/*.rs.bk
+Cargo.lock.orig
+*.profraw
+
+# Bun
+node_modules/
+dist/
+.vitest/
+.turbo/
+*.tsbuildinfo

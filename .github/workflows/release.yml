@@ -1,0 +1,190 @@
+name: Release
+
+on:
+  workflow_run:
+    workflows: [CI]
+    types: [completed]
+    branches: [master]
+
+permissions:
+  contents: read
+
+jobs:
+  version-or-publish:
+    if: github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.event == 'push'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    concurrency: release
+    outputs:
+      paron_cli_published: ${{ steps.covector.outputs.published-paron-cli }}
+      paron_cli_version: ${{ steps.version.outputs.paron-cli }}
+      paron_cli_tag: paron-cli-v${{ steps.version.outputs.paron-cli }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+
+      # Covector's status command gives no versions in a workflow_run, so read the manifest.
+      - id: version
+        run: echo "paron-cli=$(sed -n 's/^version = "\(.*\)"$/\1/p' crates/paron-cli/Cargo.toml)" >> "$GITHUB_OUTPUT"
+
+      - id: covector
+        uses: jbolda/covector/packages/action@covector-v0
+        with:
+          command: version-or-publish
+          token: ${{ secrets.GITHUB_TOKEN }}
+          createRelease: true
+          recognizeContributors: true
+
+      - if: steps.covector.outputs.commandRan == 'version'
+        uses: peter-evans/create-pull-request@v8
+        with:
+          branch: release
+          title: "chore: release"
+          commit-message: "chore: release"
+          body: ${{ steps.covector.outputs.change }}
+
+  paron-cli-binaries:
+    needs: version-or-publish
+    if: needs.version-or-publish.outputs.paron_cli_published == 'true'
+    strategy:
+      matrix:
+        include:
+          - runner: ubuntu-latest
+            target: x86_64-unknown-linux-musl
+          - runner: ubuntu-24.04-arm
+            target: aarch64-unknown-linux-musl
+          - runner: macos-latest
+            target: aarch64-apple-darwin
+          - runner: macos-latest
+            target: x86_64-apple-darwin
+          - runner: windows-latest
+            target: x86_64-pc-windows-msvc
+          - runner: windows-11-arm
+            target: aarch64-pc-windows-msvc
+    runs-on: ${{ matrix.runner }}
+    permissions:
+      contents: write
+    defaults:
+      run:
+        shell: bash
+    env:
+      TAG: ${{ needs.version-or-publish.outputs.paron_cli_tag }}
+      ARCHIVE: paron-${{ needs.version-or-publish.outputs.paron_cli_version }}-${{ matrix.target }}.${{ contains(matrix.target, 'windows') && 'zip' || 'tar.gz' }}
+      TARGET: ${{ matrix.target }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - uses: ./.github/actions/setup-bun
+
+      - uses: ./.github/actions/setup-rust
+        with:
+          target: ${{ matrix.target }}
+          cache: false
+
+      - if: runner.os == 'Linux'
+        run: sudo apt-get update && sudo apt-get install -y musl-tools
+
+      - run: cargo build --release --locked --package paron-cli --bin paron --target "$TARGET"
+        env:
+          MACOSX_DEPLOYMENT_TARGET: "11.0"
+          # mimalloc with transparent huge pages uses about 14 MiB more memory in each process.
+          CFLAGS: -DMI_DEFAULT_ALLOW_THP=0
+          RUSTFLAGS: ${{ runner.os == 'Windows' && '-C target-feature=+crt-static' || '' }}
+
+      - if: runner.os != 'Windows'
+        run: tar -czf "$ARCHIVE" -C "target/$TARGET/release" paron
+
+      - if: runner.os == 'Windows'
+        shell: pwsh
+        run: Compress-Archive -Path "target/$env:TARGET/release/paron.exe" -DestinationPath $env:ARCHIVE
+
+      - run: gh release upload "$TAG" "$ARCHIVE" --clobber
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  paron-cli-docker:
+    needs: [version-or-publish, paron-cli-binaries]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    env:
+      TAG: ${{ needs.version-or-publish.outputs.paron_cli_tag }}
+      VERSION: ${{ needs.version-or-publish.outputs.paron_cli_version }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - run: gh release download "$TAG" --dir release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - working-directory: release
+        run: |
+          mkdir amd64 arm64
+          tar -xzf "paron-$VERSION-x86_64-unknown-linux-musl.tar.gz" -C amd64
+          tar -xzf "paron-$VERSION-aarch64-unknown-linux-musl.tar.gz" -C arm64
+
+      - uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: docker/setup-buildx-action@v4
+
+      - uses: docker/build-push-action@v7
+        with:
+          context: .
+          file: crates/paron-cli/Dockerfile
+          build-args: FOLDER=release
+          platforms: linux/amd64,linux/arm64
+          tags: |
+            ghcr.io/${{ github.repository }}:${{ env.VERSION }}
+            ghcr.io/${{ github.repository }}:latest
+          labels: |
+            org.opencontainers.image.title=Paron
+            org.opencontainers.image.url=https://paron.bovolato.dev
+            org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}
+            org.opencontainers.image.version=${{ env.VERSION }}
+            org.opencontainers.image.revision=${{ github.sha }}
+          push: true
+
+  website:
+    if: github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.event == 'push'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    concurrency: pages
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - uses: ./.github/actions/setup-bun
+
+      - run: bun install --frozen-lockfile
+      - run: bunx turbo run build --filter=website
+        env:
+          TURBO_TELEMETRY_DISABLED: 1
+          TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+          TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
+
+      - uses: actions/configure-pages@v6
+      - uses: actions/upload-pages-artifact@v5
+        with:
+          path: packages/website/dist
+      - id: deployment
+        uses: actions/deploy-pages@v5

@@ -1,0 +1,85 @@
+---
+import type { ImageMetadata } from "astro";
+
+import Screenshot from "./Screenshot.astro";
+
+interface Props {
+  title: string;
+  light: ImageMetadata;
+  dark: ImageMetadata;
+  alt: string;
+  link?: { href: string; label: string };
+  reverse?: boolean;
+}
+
+const { title, light, dark, alt, link, reverse = false } = Astro.props;
+---
+
+<section class:list={["row not-content", { reverse }]}>
+  <div class="text">
+    <h2>{title}</h2>
+    <slot />
+    {link && <a href={link.href}>{link.label}</a>}
+  </div>
+  <Screenshot
+    {light}
+    {dark}
+    {alt}
+    sizes="(min-width: 64rem) 40rem, 92vw"
+    zoom={false}
+  />
+</section>
+
+<style>
+  .row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 1.5rem;
+    align-items: center;
+    margin-block: clamp(3rem, 8vw, 6rem);
+  }
+  .text {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+  h2 {
+    margin: 0;
+    font-size: clamp(1.625rem, 3vw, 2.25rem);
+    font-weight: 800;
+    line-height: 1.1;
+    letter-spacing: -0.025em;
+    color: var(--sl-color-white);
+    text-wrap: balance;
+  }
+  .text :global(p) {
+    margin: 0;
+    max-width: 46ch;
+    font-size: var(--sl-text-lg);
+    line-height: 1.6;
+    color: var(--sl-color-gray-2);
+  }
+  a {
+    width: fit-content;
+    margin-top: 0.25rem;
+    font-weight: 600;
+    color: var(--sl-color-text-accent);
+    text-underline-offset: 0.3em;
+  }
+  .row :global(.screenshot) {
+    margin: 0;
+  }
+
+  @media (min-width: 64rem) {
+    .row {
+      grid-template-columns: minmax(0, 20rem) minmax(0, 1fr);
+      gap: 3.5rem;
+    }
+    .row.reverse {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 20rem);
+    }
+    .row.reverse .text {
+      order: 2;
+    }
+  }
+</style>

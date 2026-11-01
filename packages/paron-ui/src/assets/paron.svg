@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="none">
+<path d="M0 100 L0.2 93.5 C0.6 87 4 84.5 9 83.1 C18 79.6 29 76.4 38 75.8 L62 75.8 C71 76.4 82 79.6 91 83.1 C96 84.5 99.4 87 99.8 93.5 L100 100 Z" fill="oklch(0.38 0.015 255)"></path>
+<path d="M31.6 73.1 Q50 70.5 68.4 73.1 L65.4 76.5 L34.6 76.5 Z" fill="oklch(0.29 0.015 255)"></path>
+<path d="M34.4 65 Q50 62.4 65.6 65 L65.8 77 L34.2 77 Z" fill="#f7f5f0" stroke="#b3ac9e" stroke-width="0.6" stroke-linejoin="round"></path>
+<path d="M38 64 L37 76 L63 76 L62 64 Z" fill="#e3c3a0"></path>
+<path d="M38 64 L62 64 L61.6 71.5 Q50 76.5 38.4 71.5 Z" fill="#c9a380"></path>
+<path d="M35.4 76 L64.6 76 L56.9 108 L43.1 108 Z" fill="#e9e5dc"></path>
+<path d="M44 75 L56 75 L50 94 Z" fill="#e3c3a0"></path>
+<path d="M44 75 L56 75 L54.6 78 Q50 79.4 45.4 78 Z" fill="#c9a380"></path>
+<path d="M44 76 L50 94 M56 76 L50 94" stroke="#b3ac9e" stroke-width="0.6" stroke-linecap="round"></path>
+<path d="M36.4 81.5 L30.6 86.1 L23 88.3 L38.6 108 L44.6 108 Z" fill="oklch(0.33 0.015 255)"></path>
+<path d="M63.6 81.5 L69.4 86.1 L77 88.3 L61.4 108 L55.4 108 Z" fill="oklch(0.33 0.015 255)"></path>
+<path d="M31.6 73.1 L34.6 74.9 L36.4 81.5 L30.6 86.1 L26.8 84.9 L28.6 77.5 Z" fill="oklch(0.29 0.015 255)"></path>
+<path d="M68.4 73.1 L65.4 74.9 L63.6 81.5 L69.4 86.1 L73.2 84.9 L71.4 77.5 Z" fill="oklch(0.29 0.015 255)"></path>
+<path d="M15.1 97.4 Q15 98.7 15.4 100" stroke="oklch(0.22 0.014 255)" stroke-width="0.9" stroke-linecap="round" opacity="0.7"></path>
+<path d="M84.9 97.4 Q85 98.7 84.6 100" stroke="oklch(0.22 0.014 255)" stroke-width="0.9" stroke-linecap="round" opacity="0.7"></path>
+<path d="M34.6 67.4 L44.2 76.2 L39.8 88.4 L30.8 80.4 Z" fill="#f7f5f0" stroke="#b3ac9e" stroke-width="0.6" stroke-linejoin="round"></path>
+<path d="M65.4 67.4 L55.8 76.2 L60.2 88.4 L69.2 80.4 Z" fill="#f7f5f0" stroke="#b3ac9e" stroke-width="0.6" stroke-linejoin="round"></path>
+<g transform="translate(0 3) translate(50 76) scale(0.88) translate(-50 -76)">
+<path d="M25 44 C23 44 23 52 26 53 L26 44 Z" fill="#c9a380"></path>
+<path d="M75 44 C77 44 77 52 74 53 L74 44 Z" fill="#c9a380"></path>
+<path d="M27 35 L27 53 C25.5 68 36 76 50 76 C64 76 74.5 68 73 53 L73 35 Z" fill="#e3c3a0"></path>
+<path d="M27 35 L73 35 L73 43.5 C58 41.5 42 41.5 27 43.5 Z" fill="#c9a380"></path>
+<path d="M36 72.5 Q50 78.5 64 72.5 Q50 74.5 36 72.5 Z" fill="#c9a380"></path>
+<path d="M33 43 L47.6 45.6 L47 48.2 L33.4 45.6 Z" fill="#1a1816"></path>
+<path d="M67 43 L52.4 45.6 L53 48.2 L66.6 45.6 Z" fill="#1a1816"></path>
+<path d="M36.2 49.4 L45 49.4" stroke="#1a1816" stroke-width="1.8" stroke-linecap="round"></path>
+<path d="M63.8 49.4 L55 49.4" stroke="#1a1816" stroke-width="1.8" stroke-linecap="round"></path>
+<path d="M52 48 L54.5 58 Q50 60.6 45.5 58" stroke="#1a1816" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"></path>
+<path d="M44.5 65.6 Q50 64.2 55.5 66" stroke="#1a1816" stroke-width="2" stroke-linecap="round"></path>
+<path d="M43.4 64 Q42.2 65.8 43.3 67.8" stroke="#1a1816" stroke-width="1.1" stroke-linecap="round" opacity="0.6"></path>
+<path d="M56.6 64.4 Q57.8 66.2 56.7 68.2" stroke="#1a1816" stroke-width="1.1" stroke-linecap="round" opacity="0.6"></path>
+<g transform="translate(0 3.5)">
+<path d="M26 30 L30 14 C36 9.5 44 9 50 11 C56 9 64 9.5 70 14 L74 30 Z" fill="oklch(0.31 0.012 250)"></path>
+<path d="M50 11 C48.6 14 48 18 48 24 L52 24 C52 18 51.4 14 50 11 Z" fill="oklch(0.26 0.012 250)"></path>
+<path d="M27 25 L73 25 L74 31 L26 31 Z" fill="oklch(0.19 0.01 250)"></path>
+<path d="M26 29 L74 29 L74.6 34.5 L25.4 34.5 Z" fill="oklch(0.19 0.01 250)"></path>
+<path d="M17 29 C24 39 76 39 83 29 C74 33.5 26 33.5 17 29 Z" fill="oklch(0.31 0.012 250)"></path>
+</g>
+</g>
+</svg>

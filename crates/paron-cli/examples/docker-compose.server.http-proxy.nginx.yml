@@ -1,0 +1,130 @@
+services:
+  nginx:
+    image: nginx:stable-alpine
+    restart: unless-stopped
+    depends_on:
+      - paron-server
+    configs:
+      - source: nginx
+        target: /etc/nginx/nginx.conf
+    volumes:
+      - nginx-acme:/var/cache/nginx/acme
+    ports:
+      - "443:443/tcp"
+    networks:
+      - paron
+
+  paron-server-init:
+    image: ghcr.io/nicolabovolato/paron:latest
+    command: ["server", "bootstrap"]
+    volumes:
+      - paron-server-data:/data
+    network_mode: none
+
+  paron-server:
+    image: ghcr.io/nicolabovolato/paron:latest
+    command: ["server", "run"]
+    restart: unless-stopped
+    stop_grace_period: 30s
+    depends_on:
+      paron-server-init:
+        condition: service_completed_successfully
+    read_only: true
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    tmpfs:
+      - /tmp
+    volumes:
+      - paron-server-data:/data
+    # The proxy carries only TCP, so a tunnel uses TLS over TCP. To give tunnels QUIC, publish the
+    # UDP port from Paron itself:
+    # ports:
+    #   - "443:8443/udp"
+    networks:
+      - paron
+    environment:
+      PARON_PUBLIC_URL: https://paron.example.com
+      # The network of the proxy. The proxy passes tunnels through with the PROXY protocol header,
+      # and it sends the web UI as HTTP requests with the X-Forwarded-For header.
+      PARON_TRUSTED_PROXIES: 172.30.0.0/24
+      PARON_TRUSTED_L7_PROXIES: 172.30.0.0/24
+
+networks:
+  paron:
+    ipam:
+      config:
+        - subnet: 172.30.0.0/24
+
+volumes:
+  paron-server-data:
+  nginx-acme:
+
+configs:
+  nginx:
+    content: |
+      load_module modules/ngx_http_acme_module.so;
+
+      events {}
+
+      stream {
+        upstream tunnels { server paron-server:8443; }
+        upstream web { server 127.0.0.1:8444; }
+
+        # A tunnel announces the protocol ptp1. It goes to Paron as it is.
+        map $$ssl_preread_alpn_protocols $$target {
+          ~\bptp1\b tunnels;
+          default web;
+        }
+
+        server {
+          listen 443;
+          ssl_preread on;
+          proxy_pass $$target;
+          proxy_protocol on;
+        }
+      }
+
+      http {
+        map $$http_upgrade $$connection_upgrade {
+          default upgrade;
+          "" close;
+        }
+
+        # nginx gets the certificate from Let's Encrypt and renews it. Set your e-mail address in
+        # "contact", and your domain in "server_name" below.
+        resolver 127.0.0.11;
+        acme_shared_zone zone=acme:1M;
+        acme_issuer letsencrypt {
+          uri https://acme-v02.api.letsencrypt.org/directory;
+          contact admin@example.com;
+          challenge tls-alpn-01;
+          state_path /var/cache/nginx/acme;
+          accept_terms_of_service;
+        }
+
+        server {
+          listen 127.0.0.1:8444 ssl proxy_protocol;
+          http2 on;
+          server_name paron.example.com;
+          acme_certificate letsencrypt;
+          ssl_certificate $$acme_certificate;
+          ssl_certificate_key $$acme_certificate_key;
+          ssl_certificate_cache max=2;
+
+          location / {
+            # Paron serves HTTPS only, with its own certificate.
+            proxy_pass https://paron-server:8443;
+            proxy_http_version 1.1;
+            proxy_set_header Host $$host;
+            # The terminal is a WebSocket.
+            proxy_set_header Upgrade $$http_upgrade;
+            proxy_set_header Connection $$connection_upgrade;
+            # Paron reads these three headers. Set the real address, and remove the other two.
+            proxy_set_header X-Forwarded-For $$proxy_protocol_addr;
+            proxy_set_header Forwarded "";
+            proxy_set_header X-Real-IP "";
+          }
+        }
+      }
