@@ -20,7 +20,9 @@
     throw "error: $message"
   }
 
-  $processor = switch ([System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture) {
+  $runtime = [object].Assembly.GetType('System.Runtime.InteropServices.RuntimeInformation')
+  $architecture = if ($runtime) { $runtime::OSArchitecture } elseif ([Environment]::Is64BitOperatingSystem) { 'X64' }
+  $processor = switch ($architecture) {
     'X64' { 'x86_64' }
     'Arm64' { 'aarch64' }
     default { Fail "Paron has no release for $_" }
